@@ -173,6 +173,12 @@ export default ({
       deleteFaculty(found)
     }
   }
+
+  faculties = faculties.map(faculty => ({
+    ...faculty,    
+    nod: faculty.departments.length | 0,
+    noe: faculty.elections.length | 0
+  }))
   
   return <Paper>
     <Grid

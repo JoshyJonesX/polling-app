@@ -24,6 +24,7 @@ import {
 } from '@devexpress/dx-react-grid-material-ui'
 
 
+var availableValues
 
 const useStyles = makeStyles(theme => ({
   lookupEditCell: {
@@ -95,6 +96,43 @@ const Command = ({ id, onExecute }) => {
   )
 }
 
+const LookupEditCell = ({
+  availableColumnValues, value, onValueChange,
+}) => {
+  const classes = useStyles()
+  return <TableCell
+            className={classes.lookupEditCell}
+          >
+            <Select
+                value={value}
+                onChange={event => onValueChange(event.target.value)}
+                MenuProps={{
+                  className: classes.selectMenu,
+                }}
+                input={(
+                    <Input
+                      classes={{ root: classes.inputRoot }}
+                    />
+                )}
+            >
+            {availableColumnValues.map(item => (
+                <MenuItem key={item._id} value={item.abv}>
+                  {item.abv}
+                </MenuItem>
+                ))}
+            </Select>
+          </TableCell>
+}
+
+const EditCell = (props) => {
+  const { column } = props
+  const availableColumnValues = availableValues[column.name]
+  if (availableColumnValues) {
+    return <LookupEditCell {...props} availableColumnValues={availableColumnValues} />
+  }
+  return <TableEditRow.Cell {...props} />
+}
+
 const columns = [
   { name: 'name', title: 'Department' },
   { name: 'abv', title: 'ABV' },
@@ -162,63 +200,28 @@ export default ({
     )
   )
 
-  const availableValues = {
+  availableValues = {
     faculty: faculties.map(faculty => ({_id: faculty._id, abv: faculty.abv})
     )
   }
   
-  const LookupEditCell = ({
-    availableColumnValues, value, onValueChange,
-  }) => {
-    const classes = useStyles()
-    return <TableCell
-              className={classes.lookupEditCell}
-            >
-              <Select
-                  value={value}
-                  onChange={event => onValueChange(event.target.value)}
-                  MenuProps={{
-                    className: classes.selectMenu,
-                  }}
-                  input={(
-                      <Input
-                        classes={{ root: classes.inputRoot }}
-                      />
-                  )}
-              >
-              {availableColumnValues.map(item => (
-                  <MenuItem key={item._id} value={item.abv}>
-                    {item.abv}
-                  </MenuItem>
-                  ))}
-              </Select>
-            </TableCell>
-  }
-
-  const EditCell = (props) => {
-    const { column } = props
-    const availableColumnValues = availableValues[column.name]
-    if (availableColumnValues) {
-      return <LookupEditCell {...props} availableColumnValues={availableColumnValues} />
-    }
-    return <TableEditRow.Cell {...props} />
-  }
+  
 
 
   // Changes that are committed by the edit functionality
   const commitChanges = ({ added, changed, deleted }) => {
     if (added) {
-      const isFaculty = faculties.find(({ abv }) => abv === added[0].faculty)._id
-
+      let isFaculty = faculties.find(({ abv }) => abv === added[0].faculty)._id
       let data = {...added[0], id: isFaculty}
       createDepartment(data)
     }
     if (changed) {
       const id = Object.getOwnPropertyNames(changed)[0]
+      let isFaculty = faculties.find(({ abv }) => abv === added[0].faculty)._id
       // Ensure that there are updates, else return
       if (!changed[id]) return
       const found = departments.filter(department => department._id === id)
-      const data = { ...found[0], ...changed[id]}
+      const data = { ...found[0], ...changed[id], id: isFaculty }
       editDepartment(data)
     }
     if (deleted) {
@@ -230,7 +233,7 @@ export default ({
   departments = departments.map(department => ({
     ...department,
     faculty: department.faculty.abv,
-    nou: department.students.length | 0,
+    nos: department.students.length | 0,
     noe: department.elections.length | 0
   }))
   
