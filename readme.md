@@ -1,4 +1,4 @@
-# Pollong App
+# Polling App
 
 ## Getting started
 
