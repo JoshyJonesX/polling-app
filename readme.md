@@ -1,4 +1,4 @@
-# Warbler Solution
+# polling app
 
 ## Getting started
 
