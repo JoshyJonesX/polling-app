@@ -43,7 +43,6 @@ export const getFaculties = () => {
 }
  
 export const editFaculty = faculty => {
-    console.log(faculty)
     return dispatch => apiCall("put", `/admin/api/faculty/${faculty._id}`, faculty)
         .then(res => {
             dispatch(updateFaculty(res));
@@ -54,7 +53,6 @@ export const editFaculty = faculty => {
 }
 
 export const deleteFaculty = faculty => {
-    console.log(faculty)
     return dispatch => apiCall("delete", `/admin/api/faculty/${faculty._id}`)
         .then(res => {
             dispatch(removeFaculty(res));

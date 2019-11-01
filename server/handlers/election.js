@@ -8,7 +8,8 @@ exports.createElection = async function(req, res, next) {
                 let election = await db.Election.create({
                     name: `${department.name} ${req.body.name}`,
                     category: req.body.category,
-                    active: req.body.active
+                    active: req.body.active,
+                    department: req.params.id
                 })
                     department.elections.push(election._id)
                     await department.save()
@@ -20,7 +21,8 @@ exports.createElection = async function(req, res, next) {
                         let election = await db.Election.create({
                             name: `${name} ${req.body.name}`,
                             category: req.body.category,
-                            active: req.body.active
+                            active: req.body.active,
+                            departments: _id
                         })
                         let department = await db.Department.findById(_id)
                             department.elections.push(election._id)
@@ -46,7 +48,8 @@ exports.createElection = async function(req, res, next) {
                 let election = await db.Election.create({
                     name: `${faculty.name} ${req.body.name}`,
                     category: req.body.category,
-                    active: req.body.active
+                    active: req.body.active,
+                    faculty: req.params.id
                 })
                     faculty.elections.push(election._id)
                     await faculty.save()
@@ -58,7 +61,8 @@ exports.createElection = async function(req, res, next) {
                         let election = await db.Election.create({
                             name: `${name} ${req.body.name}`,
                             category: req.body.category,
-                            active: req.body.active
+                            active: req.body.active,
+                            faculty: _id
                         })
                         let faculty = await db.Faculty.findById(_id)
                             faculty.elections.push(election._id)
@@ -134,7 +138,7 @@ exports.deleteElection = async function(req, res, next) {
         if (contestants) {
             contestants.map(async contestant => {
                 try {
-                    await db.Election.findByIdAndRemove(contestant._id)
+                    await db.Contestant.findByIdAndRemove(contestant._id)
                 } catch (err) {
                     return next(err)
                 }
@@ -143,7 +147,7 @@ exports.deleteElection = async function(req, res, next) {
         if (messages) {
             messages.map(async message => {
                 try {
-                    await db.Election.findByIdAndRemove(message._id)
+                    await db.Message.findByIdAndRemove(message._id)
                 } catch (err) {
                     return next(err)
                 }

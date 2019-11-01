@@ -35,7 +35,6 @@ export const createDepartment = department => {
 export const getDepartments = () => {
     return dispatch => apiCall("get", "/admin/api/department")
         .then(res => {
-            console.log(res)
             dispatch(fetchDepartment(res));
         })
         .catch(err => {
@@ -44,7 +43,6 @@ export const getDepartments = () => {
 }
  
 export const editDepartment = department => {
-    console.log(department)
     return dispatch => apiCall("put", `/admin/api/department/${department._id}`, department)
         .then(res => {
             dispatch(updateDepartment(res));
@@ -55,7 +53,6 @@ export const editDepartment = department => {
 }
 
 export const deleteDepartment = department => {
-    console.log(department)
     return dispatch => apiCall("delete", `/admin/api/department/${department._id}`)
         .then(res => {
             dispatch(removeDepartment(res));

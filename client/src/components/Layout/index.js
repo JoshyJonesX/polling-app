@@ -18,6 +18,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import Faculties from "../Admin/Faculties"
 import Departments from "../Admin/Departments"
+import Elections from "../Admin/Elections"
 
 const drawerWidth = 240
 
@@ -77,9 +78,18 @@ function ResponsiveDrawer(props) {
             <MenuItem component={Link} to="/admin/departments" selected={'/admin/departments' === pathname}>
                 Departments
             </MenuItem>
-            <MenuItem>
+            <MenuItem component={Link} to="/admin/elections" selected={'/admin/elections' === pathname}>
                 Elections
-            </MenuItem>
+            </MenuItem>``
+            <MenuItem component={Link} to="/admin/elections/general" selected={'/admin/elections/general' === pathname}>
+                General
+              </MenuItem>
+              <MenuItem component={Link} to="/admin/elections/faculty" selected={'/admin/elections/faculty' === pathname}>
+                Faculty
+              </MenuItem>
+              <MenuItem component={Link} to="/admin/elections/department" selected={'/admin/elections/department' === pathname}>
+                Departmental
+              </MenuItem>
         </MenuList>
     </div>
   )
@@ -139,6 +149,7 @@ function ResponsiveDrawer(props) {
                 <Route exact path="/admin" render={() => <div>Dashboard</div>} />
                 <Route  path="/admin/faculties" render={ props => <Faculties {...props} />} />
                 <Route  path="/admin/departments" render={ props => <Departments {...props} />} />
+                <Route  path="/admin/elections" render={ props => <Elections {...props} />} />
                 <Route render={() => <h3>Not Found</h3>} />
             </Switch>
       </main>
