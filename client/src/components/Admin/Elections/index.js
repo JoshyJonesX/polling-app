@@ -6,11 +6,11 @@ import { ElectionGridContainer } from '../../../containers'
 
 export default () => {
    return <Fragment>
-        <Typography variant="h4" >Department</Typography>
+        <Typography variant="h4" >Elections</Typography>
         <Switch>
-            <Route path="/admin/elections" render={ props => <ElectionGridContainer category={"general"} {...props} />}/>
-            <Route path="/admin/elections/faculty" render={ props => <ElectionGridContainer category="general" {...props} />}/>
-            <Route path="/admin/elections/department" render={ props => <ElectionGridContainer category={"general"} {...props} />}/>
+            <Route  path="/admin/elections/general" render={ props => <ElectionGridContainer category={"general"} {...props} />}/>
+            <Route path="/admin/elections/faculty" render={ props => <ElectionGridContainer category="faculty" {...props} />}/>
+            <Route path="/admin/elections/department" render={ props => <ElectionGridContainer category={"department"} {...props} />}/>
         </Switch>
     </Fragment>
 }

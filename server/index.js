@@ -6,7 +6,6 @@ const bodyParser = require("body-parser")
 const db = require("./models")
 const errorHandler = require("./handlers/error")
 const authRoutes = require('./routes/auth')
-const messagesRoutes = require('./routes/messages')
 const facultiesRoutes = require('./routes/faculties')
 const departmentsRoutes = require('./routes/departments')
 const electionRoutes = require('./routes/elections')
@@ -20,12 +19,6 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.use('/api/auth', authRoutes)
-app.use(
-  '/api/election/:election_id', 
-  loginRequired, 
-  ensureCorrectStudent, 
-  messagesRoutes
-)
 
 app.use('/admin/api/faculty', facultiesRoutes)
 app.use('/admin/api/department', departmentsRoutes)

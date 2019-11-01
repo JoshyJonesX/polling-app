@@ -88,7 +88,7 @@ function ResponsiveDrawer(props) {
                 Faculty
               </MenuItem>
               <MenuItem component={Link} to="/admin/elections/department" selected={'/admin/elections/department' === pathname}>
-                Departmental
+                Department
               </MenuItem>
         </MenuList>
     </div>

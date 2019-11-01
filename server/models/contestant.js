@@ -24,9 +24,11 @@ const contestantSchema = new mongoose.Schema({
 
 contestantSchema.pre('remove', async function(next){
     try {
+        if (this.election.length) {
             let election = await Election.findById(this.election)
-            election.contestants.remove(this.id)
-            await election.save()
+                election.contestants.remove(this.id)
+                await election.save()
+        }    
             return next()
     } catch (err) {
         return next(err)

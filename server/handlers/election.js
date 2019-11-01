@@ -6,7 +6,7 @@ exports.createElection = async function(req, res, next) {
             if (req.params.id) {
                 let department = await db.Department.findById(req.params.id) 
                 let election = await db.Election.create({
-                    name: `${department.name} ${req.body.name}`,
+                    name: `${department.abv} ${req.body.name}`,
                     category: req.body.category,
                     active: req.body.active,
                     department: req.params.id
@@ -16,20 +16,19 @@ exports.createElection = async function(req, res, next) {
                 return res.status(200).json(election)
             } else {
                 let departments = await db.Department.find({})
-                departments.map(async ({_id, name}) => {
+                departments.map(async ({_id, abv}) => {
                     try {
                         let election = await db.Election.create({
-                            name: `${name} ${req.body.name}`,
+                            name: `${abv} ${req.body.name}`,
                             category: req.body.category,
                             active: req.body.active,
-                            departments: _id
+                            department: _id
                         })
                         let department = await db.Department.findById(_id)
                             department.elections.push(election._id)
                             await department.save()
-                            return res.status(200).json({
-                                       status: "success"
-                                    })
+                            let data = await db.Election.findById(election._id).populate({path: 'department', select: 'abv -_id'})
+                            return res.status(200).json(data)
                     } catch (err) {
                         if (err.code === 11000) {
                             err.message = 'Election already exist'
@@ -46,7 +45,7 @@ exports.createElection = async function(req, res, next) {
             if (req.params.id) {
                 let faculty = await db.Faculty.findById(req.params.id) 
                 let election = await db.Election.create({
-                    name: `${faculty.name} ${req.body.name}`,
+                    name: `${faculty.abv} ${req.body.name}`,
                     category: req.body.category,
                     active: req.body.active,
                     faculty: req.params.id
@@ -56,10 +55,10 @@ exports.createElection = async function(req, res, next) {
                 return res.status(200).json(election)
             } else {
                 let faculties = await db.Faculty.find({})
-                faculties.map(async ({_id, name}) => {
+                faculties.map(async ({_id, abv}) => {
                     try {
                         let election = await db.Election.create({
-                            name: `${name} ${req.body.name}`,
+                            name: `${abv} ${req.body.name}`,
                             category: req.body.category,
                             active: req.body.active,
                             faculty: _id
@@ -67,9 +66,8 @@ exports.createElection = async function(req, res, next) {
                         let faculty = await db.Faculty.findById(_id)
                             faculty.elections.push(election._id)
                             await faculty.save()
-                            return res.status(200).json({
-                                        status: "success"
-                                    })
+                        let data = await db.Election.findById(election._id).populate({path: 'faculty', select: 'abv -_id'})
+                            return res.status(200).json(data)
                     } catch (err) {
                         if (err.code === 11000) {
                             err.message = 'Election already exist'
@@ -103,6 +101,9 @@ exports.createElection = async function(req, res, next) {
 exports.getElections = async function(req, res, next) {
     try {
         let elections = await db.Election.find({})
+                            .populate({path: 'faculty', select: 'abv -_id'})
+                            .populate({path: 'department', select: 'abv -_id'})
+                            .populate({path: 'contestants', select: 'abv -_id'})
         return res.status(200).json(elections)
     } catch (err) {
         return next(err)        
@@ -112,10 +113,9 @@ exports.getElections = async function(req, res, next) {
 exports.getElection = async function(req, res, next) {
     try {
         let election = await db.Election.findById(req.params.election_id)
-                                .populate('messages', {
-                                    text: true,
-                                    student: true
-                                })
+                            .populate({path: 'faculty', select: 'abv -_id'})
+                            .populate({path: 'department', select: 'abv -_id'})
+                            .populate({path: 'contestants', select: 'abv -_id'})
         return res.status(200).json(election)
     } catch (err) {
         return next(err)        
@@ -125,6 +125,9 @@ exports.getElection = async function(req, res, next) {
 exports.updateElection = async function (req, res, next) {
     try {
         let election = await db.Election.findByIdAndUpdate({_id: req.params.id}, req.body, {new: true})
+                            .populate({path: 'faculty', select: 'abv -_id'})
+                            .populate({path: 'department', select: 'abv -_id'})
+                            .populate({path: 'contestants', select: 'abv -_id'})
         res.status(200).json(election)
     } catch (err) {
         return next(err)

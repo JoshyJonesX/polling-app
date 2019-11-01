@@ -24,14 +24,17 @@ const messageSchema = new mongoose.Schema({
 
 messageSchema.pre('remove', async function(next){
     try {
+        if (this.student.length) {
+            let student = await Student.findById(this.student)
+            student.messages.remove(this.id)
+            await  student.save()
+        }
 
-        let student = await Student.findById(this.student)
-        student.messages.remove(this.id)
-        await  student.save()
-
-        let election = await Election.findById(this.election)
-        election.messages.remove(this.id)
-        await  election.save()
+        if (this.election.length) {
+            let election = await Election.findById(this.election)
+            election.messages.remove(this.id)
+            await  election.save()            
+        }
         
         return next()
     } catch (err) {

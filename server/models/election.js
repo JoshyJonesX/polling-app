@@ -36,12 +36,16 @@ const electionSchema = new mongoose.Schema({
 
 electionSchema.pre('remove', async function(next){
     try {        
-        let faculty = await Faculty.findById(this.faculty)
-        faculty.elections.remove(this.id)
-        await faculty.save()
-        let department = await Department.findById(this.department)
-        department.elections.remove(this.id)
-        await department.save()
+        if (typeof this.faculty == null) {
+            let faculty = await Faculty.findById(this.faculty)
+            faculty.elections.remove(this.id)
+            await faculty.save()
+        }
+        if (typeof this.department == null) {
+            let department = await Department.findById(this.department)
+            department.elections.remove(this.id)
+            await department.save()
+        }
         return next()
     } catch (err) {
         return next(err)

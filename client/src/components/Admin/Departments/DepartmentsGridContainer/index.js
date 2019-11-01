@@ -104,7 +104,7 @@ const LookupEditCell = ({
             className={classes.lookupEditCell}
           >
             <Select
-                value={value}
+                value={value || ''}
                 onChange={event => onValueChange(event.target.value)}
                 MenuProps={{
                   className: classes.selectMenu,
@@ -205,9 +205,6 @@ export default ({
     )
   }
   
-  
-
-
   // Changes that are committed by the edit functionality
   const commitChanges = ({ added, changed, deleted }) => {
     if (added) {
@@ -217,16 +214,13 @@ export default ({
     }
     if (changed) {
       const id = Object.getOwnPropertyNames(changed)[0]
-      let isFaculty = faculties.find(({ abv }) => abv === added[0].faculty)._id
       // Ensure that there are updates, else return
       if (!changed[id]) return
-      const found = departments.filter(department => department._id === id)
-      const data = { ...found[0], ...changed[id], id: isFaculty }
+      const data = { _id: id, ...changed[id] }
       editDepartment(data)
     }
     if (deleted) {
-      let found = departments.filter(department => department._id === deleted[0])[0]
-      deleteDepartment(found)
+      deleteDepartment({_id: deleted[0]})
     }
   }
 

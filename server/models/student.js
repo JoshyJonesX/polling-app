@@ -63,9 +63,11 @@ studentSchema.pre('save', async function(next){
 
 studentSchema.pre('remove', async function(next){
     try {
-        let department = await Department.findById(this.department)
-        department.students.remove(this.id)
-        await department.save()
+        if (this.department.length) {
+            let department = await Department.findById(this.department)
+            department.students.remove(this.id)
+            await department.save()
+        }
         return next()
     } catch (err) {
         return next(err)

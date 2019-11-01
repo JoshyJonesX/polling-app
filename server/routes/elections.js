@@ -1,5 +1,5 @@
 const express  = require('express')
-const router = express.Router()
+const router = express.Router({ mergeParams: true })
 
 const {
     getElections,
@@ -13,6 +13,11 @@ const {
     deleteContestant,
     updateContestant
 } = require('../handlers/contestant')
+
+const { 
+    createMessage,
+    deleteMessage
+ } = require('../handlers/messages')
 
 router.route('/')
 .get(getElections)    
@@ -30,6 +35,13 @@ router.route('/:election_id/contestant/')
 router.route('/:election_id/contestant/:contestant_id')
     .put(updateContestant)
     .delete(deleteContestant)
+
+    
+router.route('/:election_id/student/:student_id/messages')
+.post(createMessage)
+
+router.route('/:election_id/student/:student_id/messages/:message_id')
+.delete(deleteMessage)
     
 
 module.exports = router

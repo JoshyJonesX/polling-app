@@ -103,6 +103,7 @@ export const ElectionGridContainer = connect(
             elections: state.elections,
             errors: state.errors,
             grid: {
+                rows: [],
                 ...state.Electiongrid,
                 columnOrder: ['name', 'for', 'noc', 'active'],
                 columnWidths: [

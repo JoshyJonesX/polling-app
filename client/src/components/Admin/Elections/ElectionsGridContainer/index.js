@@ -23,9 +23,6 @@ import {
   GroupingPanel, PagingPanel, DragDropProvider, TableColumnReordering, TableColumnResizing, Toolbar,
 } from '@devexpress/dx-react-grid-material-ui'
 
-
-var availableValues
-
 const useStyles = makeStyles(theme => ({
   lookupEditCell: {
     padding: theme.spacing(1),
@@ -96,50 +93,7 @@ const Command = ({ id, onExecute }) => {
   )
 }
 
-const LookupEditCell = ({
-  availableColumnValues, value, onValueChange,
-}) => {
-  const classes = useStyles()
-  return <TableCell
-            className={classes.lookupEditCell}
-          >
-            <Select
-                value={value}
-                onChange={event => onValueChange(event.target.value)}
-                MenuProps={{
-                  className: classes.selectMenu,
-                }}
-                input={(
-                    <Input
-                      classes={{ root: classes.inputRoot }}
-                    />
-                )}
-            >
-            {availableColumnValues.map(item => (
-                <MenuItem key={item._id} value={item.abv}>
-                  {item.abv}
-                </MenuItem>
-                ))}
-            </Select>
-          </TableCell>
-}
 
-const EditCell = (props) => {
-  const { column } = props
-  const availableColumnValues = availableValues[column.name]
-  if (availableColumnValues) {
-    return <LookupEditCell {...props} availableColumnValues={availableColumnValues} />
-  }
-  return <TableEditRow.Cell {...props} />
-}
-
-const columns = [
-  { name: 'name', title: 'Election' },
-  { name: 'category', title: 'ABV' },
-  { name: 'for', title: 'Department/Faculty' },
-  { name: 'noc', title: ' Contestants' },
-  { name: 'active', title: 'Active' },
-]
 
 const getRowId = department => department._id
 
@@ -147,9 +101,9 @@ export default ({
   faculties,
   departments,
   elections,
-  rows,
   category,
   grid: {
+    rows,
     editingRowIds,
     rowChanges,
     addedRows,
@@ -205,52 +159,37 @@ export default ({
   ]
   
   const changeAddedRows = value => onAddedRowsChange(
-    value.map(row => (Object.keys(row).length ? row : {
+    value.map(election => (Object.keys(election).length ? election : {
         name: '',
         for: '',
         noc: '0',
-        active: false
+        active: "false"
       })
     )
   )
-  (category === "faculty") ? 
-    availableValues = {
-    for: faculties.map(faculty => ({_id: faculty._id, abv: faculty.abv}))
-  } : (category === "department") ? 
-    availableValues = {
-    for: departments.map(department => ({_id: department._id, abv: department.abv}))
-  } : availableValues = {
-    for: ["general"]
-  }
-  
-  
-
 
   // Changes that are committed by the edit functionality
   const commitChanges = ({ added, changed, deleted }) => {
     if (added) {
-      let isFaculty = faculties.find(({ abv }) => abv === added[0].faculty)._id
-      let data = {...added[0], id: isFaculty}
+      let data = {...added[0], category: category, active: false}
       createElection(data)
     }
     if (changed) {
       const id = Object.getOwnPropertyNames(changed)[0]
-      let isFaculty = faculties.find(({ abv }) => abv === added[0].faculty)._id
       // Ensure that there are updates, else return
       if (!changed[id]) return
-      const found = departments.filter(department => department._id === id)
-      const data = { ...found[0], ...changed[id], id: isFaculty }
+      const data = { _id: id, ...changed[id] }
       editElection(data)
     }
     if (deleted) {
-      let found = departments.filter(department => department._id === deleted[0])[0]
-      deleteElection(found)
+      deleteElection({_id: deleted[0]})
     }
   }
-
   rows = elections.filter( election => election.category === category).map( election => ({
     ...election,
-    noc: election.contestant.length | 0,
+    for: election.department ? election.department.abv : election.faculty ? election.faculty.abv : "GENERAL",
+    noc: election.contestants.length | 0,
+    active: election.active ? "Yes": "No"
   }))
   
   return <Paper>
@@ -309,9 +248,7 @@ export default ({
         onColumnWidthsChange={onColumnWidthsChange}
       />
       <TableHeaderRow showSortingControls />
-      <TableEditRow 
-        cellComponent={EditCell}
-      />
+      <TableEditRow />
       <TableEditColumn
         width={170}
         showAddCommand={!addedRows.length}

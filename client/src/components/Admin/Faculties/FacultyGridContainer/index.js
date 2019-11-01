@@ -163,14 +163,12 @@ export default ({
     if (changed) {
       const id = Object.getOwnPropertyNames(changed)[0]
       // Ensure that there are updates, else return
-      if (!changed[id]) return;
-      const found = faculties.filter(faculty => faculty._id === id)
-      const data = { ...found[0], ...changed[id]}
+      if (!changed[id]) return
+      const data = { _id: id, ...changed[id]}
       editFaculty(data)
     }
     if (deleted) {
-      let found = faculties.filter(faculty => faculty._id === deleted[0])[0]
-      deleteFaculty(found)
+      deleteFaculty({_id: deleted[0]})
     }
   }
 

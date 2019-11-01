@@ -27,10 +27,12 @@ const departmentSchema = new mongoose.Schema({
 })
 
 departmentSchema.pre('remove', async function(next){
-    try {        
-        let faculty = await Faculty.findById(this.faculty)
-        faculty.departments.remove(this.id)
-        await faculty.save()
+    try {
+        if (this.faculty.length) {
+            let faculty = await Faculty.findById(this.faculty)
+            faculty.departments.remove(this.id)
+            await faculty.save()
+        }    
         return next()
     } catch (err) {
         return next(err)

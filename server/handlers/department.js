@@ -46,6 +46,7 @@ exports.getDepartment = async function(req, res, next) {
 exports.updateDepartment = async function (req, res, next) {
     try {
         let updatedDepartment = await db.Department.findByIdAndUpdate({_id: req.params.department_id}, req.body, {new: true})
+                                    .populate({path: 'faculty', select: 'abv -_id'})
         return res.status(200).json(updatedDepartment)
     } catch (err) {
         return next(err)

@@ -25,13 +25,13 @@ const facultySchema = new mongoose.Schema({
 
 facultySchema.pre('remove', async function(next){
     try {
-            if (!this.departments) {
+            if (this.departments.length) {
                 await this.departments.map(async (department) => {
                     let found = Department.findById(department)
                     await found.remove()
                 })
             }
-            if (!this.elections) {
+            if (this.elections.length) {
                 await this.elections.map(async (election) => {
                     let found = Election.findById(election)
                     await found.remove()
