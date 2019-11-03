@@ -7,6 +7,11 @@ const addElection = election => ({
     election
 })
 
+const addElections = election => ({
+    type: C.ADD_ELECTIONS,
+    election
+})
+
 const fetchElection = elections => ({
     type: C.GET_ELECTIONS,
     elections
@@ -21,8 +26,18 @@ const removeElection = election => ({
     type: C.REMOVE_ELECTION,
     election
 })
-
+// creates an individual election for department/faculty
 export const createElection = election => {
+    return dispatch => apiCall("post", `/admin/api/election/${election._id}`, election)
+        .then(res => {
+            dispatch(addElection(res));
+        })
+        .catch(err => {
+            dispatch(addError(err.message));
+        })
+}
+// creates an multiple elections for each department/faculty or general
+export const createElections = election => {
     return dispatch => apiCall("post", "/admin/api/election", election)
         .then(res => {
             dispatch(addElection(res));

@@ -99,6 +99,8 @@ const getRowId = department => department._id
 
 export default ({
   row,
+  faculty_id,
+  department_id,
   elections,
   category,
   grid: {
@@ -120,6 +122,7 @@ export default ({
   getFaculties,
   getDepartments,
   createElection,
+  createElections,
   getElections,
   editElection,
   deleteElection,
@@ -136,18 +139,20 @@ export default ({
   onSortingChangeElection,
   onAddedRowsChangeElection,
 }) => {
-
-  useEffect(() => {
-    getFaculties()
-  }, [])
-
-  useEffect(() => {
-    getDepartments()
-  }, [])
-
-  useEffect(() => {
-    getElections()
-  }, [])
+  if (!row) {
+    useEffect(() => {
+      getFaculties()
+    }, [])
+  
+    useEffect(() => {
+      getDepartments()
+    }, [])
+  
+    useEffect(() => {
+      getElections()
+    }, [])
+  }
+  
 
   const [rightFixedColumns] = useState([TableEditColumn.COLUMN_TYPE])
   const columns = [
@@ -175,20 +180,30 @@ export default ({
   // Changes that are committed by the edit functionality
   const commitChanges = async ({ added, changed, deleted }) => {
     if (added) {
-        let data = {...added[0], category: category, active: false}
+      if (faculty_id)  {
+        let data = {...added[0], category: category, active: false, _id: faculty_id}
         await createElection(data)
-        getElections()
-      
+        getFaculties()
+      } else if (department_id)  {
+        let data = {...added[0], category: category, active: false, _id: department_id}
+        await createElection(data)
+        getDepartments()
+      } else {
+        let data = {...added[0], category: category, active: false}
+        await createElections(data)
+      }     
     }
     if (changed) {
       const id = Object.getOwnPropertyNames(changed)[0]
       // Ensure that there are updates, else return
       if (!changed[id]) return
       const data = { _id: id, ...changed[id] }
-      editElection(data)
+      await editElection(data)
+      let d = department_id ? getDepartments(): faculty_id ? getFaculties() : null
     }
     if (deleted) {
-      deleteElection({_id: deleted[0]})
+      await deleteElection({_id: deleted[0]})
+      let d = department_id ? getDepartments(): faculty_id ? getFaculties() : null
     }
   }
   rows = elections.filter( election => election.category === category).map( election => ({

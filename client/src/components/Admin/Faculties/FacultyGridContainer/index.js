@@ -1,7 +1,10 @@
 import React, { useState, useEffect, Fragment } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
-import IconButton from '@material-ui/core/IconButton'
+import {
+  IconButton,
+  Divider
+} from '@material-ui/core'
 
 import DeleteIcon from '@material-ui/icons/Delete'
 import EditIcon from '@material-ui/icons/Edit'
@@ -21,7 +24,7 @@ import {
 
 import { DepartmentGridContainer, ElectionGridContainer } from '../../../../containers/'
 
-const GridDetail = ({ row: {elections, departments, abv} }) => {
+const GridDetail = ({ row: {elections, departments, _id} }) => {
   const election = elections.map( election => ({
     ...election,
     noc: election.contestants.length || 0,
@@ -29,13 +32,13 @@ const GridDetail = ({ row: {elections, departments, abv} }) => {
   }))
   const department = departments.map(department => ({
     ...department,
-    faculty: abv,
     nos: department.students.length || 0,
     noe: department.elections.length || 0
   }))
   return <Fragment>
-    <DepartmentGridContainer row={department} />
-    <ElectionGridContainer row={election} />
+    <DepartmentGridContainer row={department} faculty_id={_id} />
+    <Divider />
+    <ElectionGridContainer row={election} category={"faculty"} faculty_id={_id} />
   </Fragment>
 }
 

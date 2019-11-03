@@ -22,6 +22,11 @@ export default (state = [], action) => {
                 ...state,
                 election({}, action)
             ]
+        case C.ADD_ELECTIONS:
+            return [
+                ...state,
+                election({}, action)
+            ]
         case C.GET_ELECTIONS:
             return [...action.elections]
         case C.UPDATE_ELECTION:

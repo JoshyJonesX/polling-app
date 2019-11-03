@@ -42,13 +42,13 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const ElectionGrid = ({ row: {elections} }) => {
+const ElectionGrid = ({ row: {elections, _id} }) => {
   const election = elections.map( election => ({
     ...election,
     noc: election.contestants.length || 0,
     active: election.active ? "Yes": "No"
   }))
-  return <ElectionGridContainer row={election} />
+  return <ElectionGridContainer row={election} category={"department"} department_id={_id} />
 }
 const AddButton = ({ onExecute }) => (
   <IconButton onClick={onExecute} title="Add row">
@@ -161,6 +161,7 @@ const getRowId = department => department._id
 
 export default ({
   row,
+  faculty_id,
   faculties,
   departments,
   grid: {
@@ -196,7 +197,7 @@ export default ({
   onEditingRowIdsChangeDepartment,
   onRowchangesChangeDepartment,
 }) => {
-
+if (!row) {
   useEffect(() => {
     getFaculties()
   }, [])
@@ -204,6 +205,7 @@ export default ({
   useEffect(() => {
     getDepartments()
   }, [])
+}
 
   const [rightFixedColumns] = useState([TableEditColumn.COLUMN_TYPE])
   
@@ -211,7 +213,6 @@ export default ({
     value.map(department => (Object.keys(department).length ? department : {
         name: '',
         abv:'',
-        faculty: `${row[0].faculty}`,
         nos: '0',
         noe: '0'
       })
@@ -224,23 +225,28 @@ export default ({
   }
   
   // Changes that are committed by the edit functionality
-  const commitChanges = ({ added, changed, deleted }) => {
+  const commitChanges = async ({ added, changed, deleted }) => {
     if (added) {
+      if (faculty_id)  {
+        let data = {...added[0], id: faculty_id}
+        await createDepartment(data)
+        getFaculties()
+      } else {
         let isFaculty = faculties.find(({ abv }) => abv === added[0].faculty)._id
         let data = {...added[0], id: isFaculty}
-        createDepartment(data)
-        getFaculties()
+        createDepartment(data)  
+      }      
     }
     if (changed) {
       const id = Object.getOwnPropertyNames(changed)[0]
       // Ensure that there are updates, else return
       if (!changed[id]) return
       const data = { _id: id, ...changed[id] }
-      editDepartment(data)
+      await editDepartment(data)
       getFaculties()
     }
     if (deleted) {
-      deleteDepartment({_id: deleted[0]})
+      await deleteDepartment({_id: deleted[0]})
       getFaculties()
     }
   }

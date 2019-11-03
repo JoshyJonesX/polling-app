@@ -20,6 +20,7 @@ import {
   } from "../store/actions/departments"
 import { 
     createElection,
+    createElections,
     getElections,
     editElection,
     deleteElection,
@@ -83,6 +84,7 @@ const matchDispatchToProps = () =>
         editDepartment: department => dispatch(editDepartment(department)),
         deleteDepartment: department => dispatch(deleteDepartment(department)),
         createElection: election => dispatch(createElection(election)),
+        createElections: election => dispatch(createElections(election)),
         getElections: () => dispatch(getElections()),
         editElection: election => dispatch(editElection(election)),
         deleteElection: election => dispatch(deleteElection(election)),
