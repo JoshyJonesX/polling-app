@@ -226,15 +226,10 @@ export default ({
   // Changes that are committed by the edit functionality
   const commitChanges = ({ added, changed, deleted }) => {
     if (added) {
-      if (row) {
         let isFaculty = faculties.find(({ abv }) => abv === added[0].faculty)._id
         let data = {...added[0], id: isFaculty}
         createDepartment(data)
-      } else {
-        let isFaculty = faculties.find(({ abv }) => abv === added[0].faculty)._id
-        let data = {...added[0], id: isFaculty}
-        createDepartment(data)
-      }
+        getFaculties()
     }
     if (changed) {
       const id = Object.getOwnPropertyNames(changed)[0]
@@ -242,9 +237,11 @@ export default ({
       if (!changed[id]) return
       const data = { _id: id, ...changed[id] }
       editDepartment(data)
+      getFaculties()
     }
     if (deleted) {
       deleteDepartment({_id: deleted[0]})
+      getFaculties()
     }
   }
 
