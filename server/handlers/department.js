@@ -11,7 +11,8 @@ exports.createDepartment = async function(req, res, next) {
         let foundFaculty = await db.Faculty.findById(req.body.id)
         foundFaculty.departments.push(department._id)
         await foundFaculty.save()
-        let foundDepartment = await db.Department.findById(department._id).populate({path: 'faculty', select: 'abv -_id'})
+        let foundDepartment = await db.Department.findById(department._id)
+                                        .populate({path: 'faculty', select: 'abv -_id'})
         return res.status(200).json(foundDepartment)
     } catch (err) {
         if (err.code === 11000) {
@@ -28,6 +29,7 @@ exports.getDepartments = async function(req, res, next) {
     try {
         let departments = await db.Department.find({})
                                 .populate({path: 'faculty', select: 'abv -_id'})
+                                .populate({path: 'elections', select: 'name contestants active _id'})
         return res.status(200).json(departments)
     } catch (err) {
         return next(err)
@@ -47,6 +49,7 @@ exports.updateDepartment = async function (req, res, next) {
     try {
         let updatedDepartment = await db.Department.findByIdAndUpdate({_id: req.params.department_id}, req.body, {new: true})
                                     .populate({path: 'faculty', select: 'abv -_id'})
+                                    .populate({path: 'elections', select: 'name contestants active _id'})
         return res.status(200).json(updatedDepartment)
     } catch (err) {
         return next(err)

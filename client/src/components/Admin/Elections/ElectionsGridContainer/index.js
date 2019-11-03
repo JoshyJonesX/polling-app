@@ -98,8 +98,7 @@ const Command = ({ id, onExecute }) => {
 const getRowId = department => department._id
 
 export default ({
-  faculties,
-  departments,
+  row,
   elections,
   category,
   grid: {
@@ -124,18 +123,18 @@ export default ({
   getElections,
   editElection,
   deleteElection,
-  onSortingChange,
-  onExpandedRowIdsChange,
-  onGroupingChange,
-  onExpandedGroupsChange,
-  onValueChange,
-  onCurrentPageChange,
-  onPageSizeChange,
-  onColumnOrderChange,
-  onColumnWidthsChange,
-  onEditingRowIdsChange,
-  onRowchangesChange,
-  onAddedRowsChange,
+  onExpandedGroupsChangeElection,
+  onValueChangeElection,
+  onCurrentPageChangeElection,
+  onPageSizeChangeElection,
+  onEditingRowIdsChangeElection,
+  onRowchangesChangeElection,
+  onGroupingChangeElection,
+  onExpandedRowIdsChangeElection,
+  onColumnOrderChangeElection,
+  onColumnWidthsChangeElection,
+  onSortingChangeElection,
+  onAddedRowsChangeElection,
 }) => {
 
   useEffect(() => {
@@ -157,8 +156,13 @@ export default ({
     { name: 'noc', title: ' Contestants' },
     { name: 'active', title: 'Active' },
   ]
+  const detailColumns = [
+    { name: 'name', title: 'Election' },
+    { name: 'noc', title: ' Contestants' },
+    { name: 'active', title: 'Active' },
+  ]
   
-  const changeAddedRows = value => onAddedRowsChange(
+  const changeAddedRows = value => onAddedRowsChangeElection(
     value.map(election => (Object.keys(election).length ? election : {
         name: '',
         for: '',
@@ -169,10 +173,12 @@ export default ({
   )
 
   // Changes that are committed by the edit functionality
-  const commitChanges = ({ added, changed, deleted }) => {
+  const commitChanges = async ({ added, changed, deleted }) => {
     if (added) {
-      let data = {...added[0], category: category, active: false}
-      createElection(data)
+        let data = {...added[0], category: category, active: false}
+        await createElection(data)
+        getElections()
+      
     }
     if (changed) {
       const id = Object.getOwnPropertyNames(changed)[0]
@@ -188,42 +194,42 @@ export default ({
   rows = elections.filter( election => election.category === category).map( election => ({
     ...election,
     for: election.department ? election.department.abv : election.faculty ? election.faculty.abv : "GENERAL",
-    noc: election.contestants.length | 0,
+    noc: election.contestants.length || 0,
     active: election.active ? "Yes": "No"
   }))
   
   return <Paper>
-    <Grid
+    {!row && <Grid
       rows={rows}
       columns={columns}
       getRowId={getRowId}
     >
        <SearchState
           value={searchValue}
-          onValueChange={onValueChange}
+          onValueChange={onValueChangeElection}
         />
       <SortingState
         sorting={sorting}
-        onSortingChange={onSortingChange}
+        onSortingChange={onSortingChangeElection}
       />
       <GroupingState
         grouping={grouping}
-        onGroupingChange={onGroupingChange}
+        onGroupingChange={onGroupingChangeElection}
         expandedGroups={expandedGroups}
-        onExpandedGroupsChange={onExpandedGroupsChange}
+        onExpandedGroupsChange={onExpandedGroupsChangeElection}
       />
       <PagingState
         currentPage={currentPage}
-        onCurrentPageChange={onCurrentPageChange}
+        onCurrentPageChange={onCurrentPageChangeElection}
         pageSize={pageSize}
-        onPageSizeChange={onPageSizeChange}
+        onPageSizeChange={onPageSizeChangeElection}
       />
       
       <EditingState
           editingRowIds={editingRowIds}
-          onEditingRowIdsChange={onEditingRowIdsChange}
+          onEditingRowIdsChange={onEditingRowIdsChangeElection}
           rowChanges={rowChanges}
-          onRowChangesChange={onRowchangesChange}
+          onRowChangesChange={onRowchangesChangeElection}
           addedRows={addedRows}
           onAddedRowsChange={changeAddedRows}
           onCommitChanges={commitChanges}
@@ -231,7 +237,7 @@ export default ({
 
       <RowDetailState
         expandedRowIds={expandedRowIds}
-        onExpandedRowIdsChange={onExpandedRowIdsChange}
+        onExpandedRowIdsChange={onExpandedRowIdsChangeElection}
       />
 
       <IntegratedFiltering />
@@ -245,7 +251,7 @@ export default ({
 
       <TableColumnResizing
         columnWidths={columnWidths}
-        onColumnWidthsChange={onColumnWidthsChange}
+        onColumnWidthsChange={onColumnWidthsChangeElection}
       />
       <TableHeaderRow showSortingControls />
       <TableEditRow />
@@ -258,7 +264,7 @@ export default ({
       />
       <TableColumnReordering
         order={columnOrder}
-        onOrderChange={onColumnOrderChange}
+        onOrderChange={onColumnOrderChangeElection}
       />
       <TableGroupRow />
       <TableFixedColumns
@@ -274,6 +280,50 @@ export default ({
       <PagingPanel
         pageSizes={pageSizes}
       />
-    </Grid>
+    </Grid>}    
+    {row && <Grid
+      rows={row}
+      columns={detailColumns}      
+      getRowId={getRowId}
+    >
+      <SortingState
+        sorting={sorting}
+        onSortingChange={onSortingChangeElection}
+      />
+      
+      <EditingState
+          editingRowIds={editingRowIds}
+          onEditingRowIdsChange={onEditingRowIdsChangeElection}
+          rowChanges={rowChanges}
+          onRowChangesChange={onRowchangesChangeElection}
+          addedRows={addedRows}
+          onAddedRowsChange={changeAddedRows}
+          onCommitChanges={commitChanges}
+        />
+      <IntegratedSorting />
+
+      <Table />
+
+      <TableColumnResizing
+        columnWidths={columnWidths}
+        onColumnWidthsChange={onColumnWidthsChangeElection}
+      />
+      <TableHeaderRow showSortingControls />
+      <TableEditRow />
+      <TableEditColumn
+        width={170}
+        showAddCommand={!addedRows.length}
+        showEditCommand
+        showDeleteCommand
+        commandComponent={Command}
+      />
+      <TableColumnReordering
+        order={columnOrder}
+        onOrderChange={onColumnOrderChangeElection}
+      />
+      <TableFixedColumns
+          rightColumns={rightFixedColumns}
+      />
+    </Grid>}
   </Paper>
 }

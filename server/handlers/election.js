@@ -27,7 +27,7 @@ exports.createElection = async function(req, res, next) {
                         let department = await db.Department.findById(_id)
                             department.elections.push(election._id)
                             await department.save()
-                            let data = await db.Election.findById(election._id).populate({path: 'department', select: 'abv -_id'})
+                            let data = await db.Election.findById(election._id).populate({path: 'department', select: 'abv _id'})
                             return res.status(200).json(data)
                     } catch (err) {
                         if (err.code === 11000) {

@@ -23,6 +23,7 @@ import {
   GroupingPanel, PagingPanel, DragDropProvider, TableColumnReordering, TableColumnResizing, Toolbar,
 } from '@devexpress/dx-react-grid-material-ui'
 
+import { ElectionGridContainer } from '../../../../containers/'
 
 var availableValues
 
@@ -41,6 +42,14 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+const ElectionGrid = ({ row: {elections} }) => {
+  const election = elections.map( election => ({
+    ...election,
+    noc: election.contestants.length || 0,
+    active: election.active ? "Yes": "No"
+  }))
+  return <ElectionGridContainer row={election} />
+}
 const AddButton = ({ onExecute }) => (
   <IconButton onClick={onExecute} title="Add row">
     <Add  />
@@ -141,9 +150,17 @@ const columns = [
   { name: 'noe', title: 'Elections' }
 ]
 
+const detailColumns = [
+  { name: 'name', title: 'Department' },
+  { name: 'abv', title: 'ABV' },
+  { name: 'nos', title: ' Students' },
+  { name: 'noe', title: 'Elections' }
+]
+
 const getRowId = department => department._id
 
 export default ({
+  row,
   faculties,
   departments,
   grid: {
@@ -166,18 +183,18 @@ export default ({
   getDepartments,
   editDepartment,
   deleteDepartment,
-  onSortingChange,
-  onExpandedRowIdsChange,
-  onGroupingChange,
-  onExpandedGroupsChange,
-  onValueChange,
-  onCurrentPageChange,
-  onPageSizeChange,
-  onColumnOrderChange,
-  onColumnWidthsChange,
-  onEditingRowIdsChange,
-  onRowchangesChange,
-  onAddedRowsChange,
+  onSortingChangeDepartment,
+  onAddedRowsChangeDepartment,
+  onGroupingChangeDepartment,
+  onColumnOrderChangeDepartment,
+  onColumnWidthsChangeDepartment,
+  onExpandedRowIdsChangeDepartment,
+  onExpandedGroupsChangeDepartment,
+  onValueChangeDepartment,
+  onCurrentPageChangeDepartment,
+  onPageSizeChangeDepartment,
+  onEditingRowIdsChangeDepartment,
+  onRowchangesChangeDepartment,
 }) => {
 
   useEffect(() => {
@@ -190,10 +207,11 @@ export default ({
 
   const [rightFixedColumns] = useState([TableEditColumn.COLUMN_TYPE])
   
-  const changeAddedRows = value => onAddedRowsChange(
+  const changeAddedRows = value => onAddedRowsChangeDepartment(
     value.map(department => (Object.keys(department).length ? department : {
         name: '',
-        abv: '',
+        abv:'',
+        faculty: `${row[0].faculty}`,
         nos: '0',
         noe: '0'
       })
@@ -208,9 +226,15 @@ export default ({
   // Changes that are committed by the edit functionality
   const commitChanges = ({ added, changed, deleted }) => {
     if (added) {
-      let isFaculty = faculties.find(({ abv }) => abv === added[0].faculty)._id
-      let data = {...added[0], id: isFaculty}
-      createDepartment(data)
+      if (row) {
+        let isFaculty = faculties.find(({ abv }) => abv === added[0].faculty)._id
+        let data = {...added[0], id: isFaculty}
+        createDepartment(data)
+      } else {
+        let isFaculty = faculties.find(({ abv }) => abv === added[0].faculty)._id
+        let data = {...added[0], id: isFaculty}
+        createDepartment(data)
+      }
     }
     if (changed) {
       const id = Object.getOwnPropertyNames(changed)[0]
@@ -227,42 +251,42 @@ export default ({
   departments = departments.map(department => ({
     ...department,
     faculty: department.faculty.abv,
-    nos: department.students.length | 0,
-    noe: department.elections.length | 0
+    nos: department.students.length || 0,
+    noe: department.elections.length || 0
   }))
   
   return <Paper>
-    <Grid
+    {!row && <Grid
       rows={departments}
       columns={columns}
       getRowId={getRowId}
     >
        <SearchState
           value={searchValue}
-          onValueChange={onValueChange}
+          onValueChange={onValueChangeDepartment}
         />
       <SortingState
         sorting={sorting}
-        onSortingChange={onSortingChange}
+        onSortingChange={onSortingChangeDepartment}
       />
       <GroupingState
         grouping={grouping}
-        onGroupingChange={onGroupingChange}
+        onGroupingChange={onGroupingChangeDepartment}
         expandedGroups={expandedGroups}
-        onExpandedGroupsChange={onExpandedGroupsChange}
+        onExpandedGroupsChange={onExpandedGroupsChangeDepartment}
       />
       <PagingState
         currentPage={currentPage}
-        onCurrentPageChange={onCurrentPageChange}
+        onCurrentPageChange={onCurrentPageChangeDepartment}
         pageSize={pageSize}
-        onPageSizeChange={onPageSizeChange}
+        onPageSizeChange={onPageSizeChangeDepartment}
       />
       
       <EditingState
           editingRowIds={editingRowIds}
-          onEditingRowIdsChange={onEditingRowIdsChange}
+          onEditingRowIdsChange={onEditingRowIdsChangeDepartment}
           rowChanges={rowChanges}
-          onRowChangesChange={onRowchangesChange}
+          onRowChangesChange={onRowchangesChangeDepartment}
           addedRows={addedRows}
           onAddedRowsChange={changeAddedRows}
           onCommitChanges={commitChanges}
@@ -270,7 +294,7 @@ export default ({
 
       <RowDetailState
         expandedRowIds={expandedRowIds}
-        onExpandedRowIdsChange={onExpandedRowIdsChange}
+        onExpandedRowIdsChange={onExpandedRowIdsChangeDepartment}
       />
 
       <IntegratedFiltering />
@@ -284,7 +308,7 @@ export default ({
 
       <TableColumnResizing
         columnWidths={columnWidths}
-        onColumnWidthsChange={onColumnWidthsChange}
+        onColumnWidthsChange={onColumnWidthsChangeDepartment}
       />
       <TableHeaderRow showSortingControls />
       <TableEditRow 
@@ -299,22 +323,68 @@ export default ({
       />
       <TableColumnReordering
         order={columnOrder}
-        onOrderChange={onColumnOrderChange}
+        onOrderChange={onColumnOrderChangeDepartment}
       />
       <TableGroupRow />
       <TableFixedColumns
           rightColumns={rightFixedColumns}
       />
 
-      {/* <TableRowDetail
-        contentComponent={ReduxGridDetailContainer}
-      /> */}
+      <TableRowDetail
+        contentComponent={ElectionGrid}
+      />
       <Toolbar />
       <SearchPanel />
       <GroupingPanel showSortingControls />
       <PagingPanel
         pageSizes={pageSizes}
       />
-    </Grid>
+    </Grid>}
+    {row && <Grid
+      rows={row}
+      columns={detailColumns}
+      getRowId={getRowId}
+    >
+      <SortingState
+        sorting={sorting}
+        onSortingChange={onSortingChangeDepartment}
+      />
+      
+      <EditingState
+          editingRowIds={editingRowIds}
+          onEditingRowIdsChange={onEditingRowIdsChangeDepartment}
+          rowChanges={rowChanges}
+          onRowChangesChange={onRowchangesChangeDepartment}
+          addedRows={addedRows}
+          onAddedRowsChange={changeAddedRows}
+          onCommitChanges={commitChanges}
+        />
+      <IntegratedSorting />
+
+      <Table />
+
+      <TableColumnResizing
+        columnWidths={columnWidths}
+        onColumnWidthsChange={onColumnWidthsChangeDepartment}
+      />
+      <TableHeaderRow showSortingControls />
+      <TableEditRow 
+        cellComponent={EditCell}
+      />
+      <TableEditColumn
+        width={170}
+        showAddCommand={!addedRows.length}
+        showEditCommand
+        showDeleteCommand
+        commandComponent={Command}
+      />
+      <TableColumnReordering
+        order={columnOrder}
+        onOrderChange={onColumnOrderChangeDepartment}
+      />
+      <TableFixedColumns
+          rightColumns={rightFixedColumns}
+      />
+    </Grid>}
   </Paper>
 }

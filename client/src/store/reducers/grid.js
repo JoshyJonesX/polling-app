@@ -14,12 +14,32 @@ const gridInitialState = {
     pageSizes: [5, 10, 15, 0],
   }
 
-export default (state = gridInitialState, action) => {
-    if (action.type === C.GRID_STATE_CHANGE_ACTION) {
+export const facultyGrid = (state = gridInitialState, action) => {
+    if (action.type === C.FACULTY_GRID_STATE_CHANGE_ACTION) {
       return {
         ...state,
         [action.partialStateName]: action.partialStateValue,
-      };
+      }
     }
-    return state;
-  };
+    return state
+  }
+  
+export const departmentGrid = (state = gridInitialState, action) => {
+    if (action.type === C.DEPARTMENT_GRID_STATE_CHANGE_ACTION) {
+      return {
+        ...state,
+        [action.partialStateName]: action.partialStateValue,
+      }
+    }
+    return state
+  }
+
+export const electionGrid = (state = gridInitialState, action) => {
+    if (action.type === C.ELECTION_GRID_STATE_CHANGE_ACTION) {
+      return {
+        ...state,
+        [action.partialStateName]: action.partialStateValue,
+      }
+    }
+    return state
+  }

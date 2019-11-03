@@ -1,7 +1,11 @@
 import { connect } from 'react-redux'
 import { authUser } from "../store/actions/auth"
 import { removeError } from "../store/actions/errors"
-import createGridAction from "../store/actions/grid"
+import {
+    createGridActionFaculty,
+    createGridActionDepartment,
+    createGridActionElection
+} from "../store/actions/grid"
 import { 
     createFaculty,
     getFaculties,
@@ -28,18 +32,48 @@ import ElectionsGridContainerComponent from "../components/Admin/Elections/Elect
 
 const matchDispatchToProps = () =>
     dispatch => ({
-        onAddedRowsChange: addedRows => dispatch(createGridAction('addedRows', addedRows)),
-        onEditingRowIdsChange: editingRowIds => dispatch(createGridAction('editingRowIds', editingRowIds)),
-        onRowchangesChange: rowChanges => dispatch(createGridAction('rowChanges', rowChanges)),
-        onSortingChange: sorting => dispatch(createGridAction('sorting', sorting)),
-        onExpandedRowIdsChange: expandedRowIds => dispatch(createGridAction('expandedRowIds', expandedRowIds)),
-        onGroupingChange: grouping => dispatch(createGridAction('grouping', grouping)),
-        onExpandedGroupsChange: expandedGroups => dispatch(createGridAction('expandedGroups', expandedGroups)),
-        onValueChange: searchValue => dispatch(createGridAction('searchValue', searchValue)),
-        onCurrentPageChange: currentPage => dispatch(createGridAction('currentPage', currentPage)),
-        onPageSizeChange: pageSize => dispatch(createGridAction('pageSize', pageSize)),
-        onColumnOrderChange: order => dispatch(createGridAction('columnOrder', order)),
-        onColumnWidthsChange: widths => dispatch(createGridAction('columnWidths', widths)),
+        onExpandedRowIdsChangeFaculty: expandedRowIds => dispatch(createGridActionFaculty('expandedRowIds', expandedRowIds)),
+        onExpandedGroupsChangeFaculty: expandedGroups => dispatch(createGridActionFaculty('expandedGroups', expandedGroups)),
+        onValueChangeFaculty: searchValue => dispatch(createGridActionFaculty('searchValue', searchValue)),
+        onEditingRowIdsChangeFaculty: editingRowIds => dispatch(createGridActionFaculty('editingRowIds', editingRowIds)),
+        onRowchangesChangeFaculty: rowChanges => dispatch(createGridActionFaculty('rowChanges', rowChanges)),
+        onCurrentPageChangeFaculty: currentPage => dispatch(createGridActionFaculty('currentPage', currentPage)),
+        onPageSizeChangeFaculty: pageSize => dispatch(createGridActionFaculty('pageSize', pageSize)),
+        onAddedRowsChangeFaculty:addedRows => dispatch(createGridActionFaculty('addedRows', addedRows)),
+        onSortingChangeFaculty:sorting => dispatch(createGridActionFaculty('sorting', sorting)),
+        onGroupingChangeFaculty:grouping => dispatch(createGridActionFaculty('grouping', grouping)),
+        onColumnOrderChangeFaculty:order => dispatch(createGridActionFaculty('columnOrder', order)),
+        onColumnWidthsChangeFaculty:widths => dispatch(createGridActionFaculty('columnWidths', widths)),
+        onExpandedRowIdsChangeFaculty:expandedRowIds => dispatch(createGridActionFaculty('expandedRowIds', expandedRowIds)),
+
+        onExpandedRowIdsChangeElection: expandedRowIds => dispatch(createGridActionElection('expandedRowIds', expandedRowIds)),
+        onExpandedGroupsChangeElection: expandedGroups => dispatch(createGridActionElection('expandedGroups', expandedGroups)),
+        onValueChangeElection: searchValue => dispatch(createGridActionElection('searchValue', searchValue)),
+        onEditingRowIdsChangeElection: editingRowIds => dispatch(createGridActionElection('editingRowIds', editingRowIds)),
+        onRowchangesChangeElection: rowChanges => dispatch(createGridActionElection('rowChanges', rowChanges)),
+        onCurrentPageChangeElection: currentPage => dispatch(createGridActionElection('currentPage', currentPage)),
+        onPageSizeChangeElection: pageSize => dispatch(createGridActionElection('pageSize', pageSize)),
+        onAddedRowsChangeElection: addedRows => dispatch(createGridActionElection('addedRows', addedRows)),
+        onSortingChangeElection: sorting => dispatch(createGridActionElection('sorting', sorting)),
+        onGroupingChangeElection: grouping => dispatch(createGridActionElection('grouping', grouping)),
+        onColumnOrderChangeElection: order => dispatch(createGridActionElection('columnOrder', order)),
+        onColumnWidthsChangeElection: widths => dispatch(createGridActionElection('columnWidths', widths)),
+        onExpandedRowIdsChangeElection: expandedRowIds => dispatch(createGridActionElection('expandedRowIds', expandedRowIds)),
+        
+        onExpandedRowIdsChangeDepartment: expandedRowIds => dispatch(createGridActionDepartment('expandedRowIds', expandedRowIds)),
+        onExpandedGroupsChangeDepartment: expandedGroups => dispatch(createGridActionDepartment('expandedGroups', expandedGroups)),
+        onValueChangeDepartment: searchValue => dispatch(createGridActionDepartment('searchValue', searchValue)),
+        onEditingRowIdsChangeDepartment: editingRowIds => dispatch(createGridActionDepartment('editingRowIds', editingRowIds)),
+        onRowchangesChangeDepartment: rowChanges => dispatch(createGridActionDepartment('rowChanges', rowChanges)),
+        onCurrentPageChangeDepartment: currentPage => dispatch(createGridActionDepartment('currentPage', currentPage)),
+        onPageSizeChangeDepartment: pageSize => dispatch(createGridActionDepartment('pageSize', pageSize)),
+        onAddedRowsChangeDepartment: addedRows => dispatch(createGridActionDepartment('addedRows', addedRows)),
+        onSortingChangeDepartment: sorting => dispatch(createGridActionDepartment('sorting', sorting)),
+        onGroupingChangeDepartment: grouping => dispatch(createGridActionDepartment('grouping', grouping)),
+        onColumnOrderChangeDepartment: order => dispatch(createGridActionDepartment('columnOrder', order)),
+        onColumnWidthsChangeDepartment: widths => dispatch(createGridActionDepartment('columnWidths', widths)),
+        onExpandedRowIdsChangeDepartment: expandedRowIds => dispatch(createGridActionDepartment('expandedRowIds', expandedRowIds)),
+
         createFaculty: faculty => dispatch(createFaculty(faculty)),
         getFaculties: () => dispatch(getFaculties()),
         editFaculty: faculty => dispatch(editFaculty(faculty)),
@@ -62,7 +96,7 @@ export const FacultyGridContainer = connect(
             faculties: state.faculties,
             errors: state.errors,
             grid: {
-                ...state.Facultygrid,
+                ...state.facultyGrid,
                 columnOrder: ['name', 'abv', 'nod', 'noe']},
                 columnWidths: [
                     { columnName: 'name', width: 200 },
@@ -81,7 +115,7 @@ export const DepartmentGridContainer = connect(
             departments: state.departments,
             errors: state.errors,
             grid: {
-                ...state.Departmentgrid,
+                ...state.departmentGrid,
                 columnOrder: ['name', 'abv', 'faculty', 'nos', 'noe'],
                 columnWidths: [
                     { columnName: 'name', width: 200 },
@@ -104,7 +138,7 @@ export const ElectionGridContainer = connect(
             errors: state.errors,
             grid: {
                 rows: [],
-                ...state.Electiongrid,
+                ...state.electionGrid,
                 columnOrder: ['name', 'for', 'noc', 'active'],
                 columnWidths: [
                     { columnName: 'name', width: 300 },

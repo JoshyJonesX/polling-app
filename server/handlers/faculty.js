@@ -20,14 +20,8 @@ exports.createFaculty = async function (req, res, next) {
 exports.getFaculties = async function (req, res, next) {
     try {
         const faculties = await db.Faculty.find({})
-            .populate('departments', {
-                name: true,
-                abv: true
-            })
-            .populate('elections', {
-                name: true,
-                active: true
-            })
+                                .populate({path: 'elections', select: 'name contestants active _id'})
+                                .populate({path: 'departments', select: 'name abv students elections _id'})
         return res.status(200).json(faculties)
     } catch (err) {
         return next(err)
@@ -55,6 +49,8 @@ exports.getFaculty = async function(req, res, next) {
 exports.updateFaculty = async function (req, res, next) {
     try {
         const updatedfaculty = await db.Faculty.findOneAndUpdate({_id: req.params.faculty_id}, req.body, {new: true})
+                                            .populate({path: 'elections', select: 'name contestants active _id'})
+                                            .populate({path: 'departments', select: 'name abv students elections _id'})
         return res.status(200).json(updatedfaculty)
     } catch (err) {
         return next(err)

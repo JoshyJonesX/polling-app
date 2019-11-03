@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux'
 import currentUser from './currentUser'
 import errors from './errors'
-import Facultygrid from './grid'
-import Departmentgrid from './grid'
-import Electiongrid from './grid'
+import {
+    facultyGrid,
+    departmentGrid,
+    electionGrid
+} from './grid'
 import faculties from './faculties'
 import departments from './departments'
 import elections from './elections'
@@ -14,9 +16,9 @@ const rootReducer = combineReducers({
     faculties,
     departments,
     elections,
-    Facultygrid,
-    Departmentgrid,
-    Electiongrid
+    facultyGrid,
+    departmentGrid,
+    electionGrid
 })
 
 export default rootReducer

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import IconButton from '@material-ui/core/IconButton'
@@ -19,6 +19,25 @@ import {
   GroupingPanel, PagingPanel, DragDropProvider, TableColumnReordering, TableColumnResizing, Toolbar,
 } from '@devexpress/dx-react-grid-material-ui'
 
+import { DepartmentGridContainer, ElectionGridContainer } from '../../../../containers/'
+
+const GridDetail = ({ row: {elections, departments, abv} }) => {
+  const election = elections.map( election => ({
+    ...election,
+    noc: election.contestants.length || 0,
+    active: election.active ? "Yes": "No"
+  }))
+  const department = departments.map(department => ({
+    ...department,
+    faculty: abv,
+    nos: department.students.length || 0,
+    noe: department.elections.length || 0
+  }))
+  return <Fragment>
+    <DepartmentGridContainer row={department} />
+    <ElectionGridContainer row={election} />
+  </Fragment>
+}
 
 
 /* const useStyles = makeStyles(theme => ({
@@ -124,18 +143,18 @@ export default ({
   getFaculties,
   editFaculty,
   deleteFaculty,
-  onSortingChange,
-  onExpandedRowIdsChange,
-  onGroupingChange,
-  onExpandedGroupsChange,
-  onValueChange,
-  onCurrentPageChange,
-  onPageSizeChange,
-  onColumnOrderChange,
-  onColumnWidthsChange,
-  onEditingRowIdsChange,
-  onRowchangesChange,
-  onAddedRowsChange,
+  onExpandedGroupsChangeFaculty,
+  onValueChangeFaculty,
+  onCurrentPageChangeFaculty,
+  onPageSizeChangeFaculty,
+  onEditingRowIdsChangeFaculty,
+  onRowchangesChangeFaculty,
+  onExpandedRowIdsChangeFaculty,
+  onColumnWidthsChangeFaculty,
+  onColumnOrderChangeFaculty,
+  onGroupingChangeFaculty,
+  onSortingChangeFaculty,
+  onAddedRowsChangeFaculty,
 }) => {
 
   useEffect(() => {
@@ -144,7 +163,7 @@ export default ({
 
   const [rightFixedColumns] = useState([TableEditColumn.COLUMN_TYPE])
   
-  const changeAddedRows = value => onAddedRowsChange(
+  const changeAddedRows = value => onAddedRowsChangeFaculty(
     value.map(faculty => (Object.keys(faculty).length ? faculty : {
         name: '',
         abv: '',
@@ -174,8 +193,8 @@ export default ({
 
   faculties = faculties.map(faculty => ({
     ...faculty,    
-    nod: faculty.departments.length | 0,
-    noe: faculty.elections.length | 0
+    nod: faculty.departments.length || 0,
+    noe: faculty.elections.length || 0
   }))
   
   return <Paper>
@@ -186,30 +205,30 @@ export default ({
     >
        <SearchState
           value={searchValue}
-          onValueChange={onValueChange}
+          onValueChange={onValueChangeFaculty}
         />
       <SortingState
         sorting={sorting}
-        onSortingChange={onSortingChange}
+        onSortingChange={onSortingChangeFaculty}
       />
       <GroupingState
         grouping={grouping}
-        onGroupingChange={onGroupingChange}
+        onGroupingChange={onGroupingChangeFaculty}
         expandedGroups={expandedGroups}
-        onExpandedGroupsChange={onExpandedGroupsChange}
+        onExpandedGroupsChange={onExpandedGroupsChangeFaculty}
       />
       <PagingState
         currentPage={currentPage}
-        onCurrentPageChange={onCurrentPageChange}
+        onCurrentPageChange={onCurrentPageChangeFaculty}
         pageSize={pageSize}
-        onPageSizeChange={onPageSizeChange}
+        onPageSizeChange={onPageSizeChangeFaculty}
       />
       
       <EditingState
           editingRowIds={editingRowIds}
-          onEditingRowIdsChange={onEditingRowIdsChange}
+          onEditingRowIdsChange={onEditingRowIdsChangeFaculty}
           rowChanges={rowChanges}
-          onRowChangesChange={onRowchangesChange}
+          onRowChangesChange={onRowchangesChangeFaculty}
           addedRows={addedRows}
           onAddedRowsChange={changeAddedRows}
           onCommitChanges={commitChanges}
@@ -217,7 +236,7 @@ export default ({
 
       <RowDetailState
         expandedRowIds={expandedRowIds}
-        onExpandedRowIdsChange={onExpandedRowIdsChange}
+        onExpandedRowIdsChange={onExpandedRowIdsChangeFaculty}
       />
 
       <IntegratedFiltering />
@@ -231,7 +250,7 @@ export default ({
 
       <TableColumnResizing
         columnWidths={columnWidths}
-        onColumnWidthsChange={onColumnWidthsChange}
+        onColumnWidthsChange={onColumnWidthsChangeFaculty}
       />
       <TableHeaderRow showSortingControls />
       <TableEditRow/>
@@ -244,16 +263,16 @@ export default ({
       />
       <TableColumnReordering
         order={columnOrder}
-        onOrderChange={onColumnOrderChange}
+        onOrderChange={onColumnOrderChangeFaculty}
       />
       <TableGroupRow />
       <TableFixedColumns
           rightColumns={rightFixedColumns}
       />
 
-      {/* <TableRowDetail
-        contentComponent={ReduxGridDetailContainer}
-      /> */}
+      <TableRowDetail
+        contentComponent={GridDetail}
+      />
       <Toolbar />
       <SearchPanel />
       <GroupingPanel showSortingControls />
