@@ -5,10 +5,11 @@ exports.createContestant = async function (req, res, next) {
     try {
         let student = await db.Student.findOne({matNo: req.body.matNo})
         let contestant = await db.Contestant.create({
-            firsName: req.body.FirstName,
-            lastName: req.body.lastName,
+            fName: req.body.fName,
+            lName: req.body.lName,
+            matNo: student.matNo,
             election: req.params.election_id,
-            user: student._id,
+            student: student._id,
             vote: 0
         })
         let election = await db.Election.findById(req.params.election_id)
@@ -30,7 +31,7 @@ exports.createContestant = async function (req, res, next) {
 exports.getContestants = async function (req, res, next) {
     try {
         let contestants = await db.Contestant.find({})
-                                .populate('user', {
+                                .populate('student', {
                                     matNo: true,
                                     level: true
                                 })
@@ -47,7 +48,7 @@ exports.getContestants = async function (req, res, next) {
 // update
 exports.updateContestant = async function (req, res, next) {
     try {
-        let foundContestant = db.Contestant.findByIdAndUpdate({_id: req.params.id}, req.body, {new: true})
+        let foundContestant = await db.Contestant.findByIdAndUpdate({_id: req.params.contestant_id}, req.body, {new: true})
         return res.status(200).json(foundContestant)
     } catch (err) {
         return next(err)
@@ -57,7 +58,7 @@ exports.updateContestant = async function (req, res, next) {
 // delete
 exports.deleteContestant = async function(req, res, next) {
     try {
-        let foundContestant = await db.Department.findById(req.params.department_id)
+        let foundContestant = await db.Contestant.findById(req.params.contestant_id)
         await foundContestant.remove()
         return res.status(200).json(foundContestant)
     } catch (err) {

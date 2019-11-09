@@ -7,11 +7,6 @@ const addElection = election => ({
     election
 })
 
-const addElections = election => ({
-    type: C.ADD_ELECTIONS,
-    election
-})
-
 const fetchElection = elections => ({
     type: C.GET_ELECTIONS,
     elections

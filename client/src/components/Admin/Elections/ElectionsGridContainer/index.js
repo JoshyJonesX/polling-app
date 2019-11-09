@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import IconButton from '@material-ui/core/IconButton'
-import Input from '@material-ui/core/Input'
-import Select from '@material-ui/core/Select'
-import MenuItem from '@material-ui/core/MenuItem'
-import TableCell from '@material-ui/core/TableCell'
 
 import DeleteIcon from '@material-ui/icons/Delete'
 import EditIcon from '@material-ui/icons/Edit'
@@ -23,20 +18,9 @@ import {
   GroupingPanel, PagingPanel, DragDropProvider, TableColumnReordering, TableColumnResizing, Toolbar,
 } from '@devexpress/dx-react-grid-material-ui'
 
-const useStyles = makeStyles(theme => ({
-  lookupEditCell: {
-    padding: theme.spacing(1),
-  },
-  dialog: {
-    width: 'calc(100% - 16px)',
-  },
-  inputRoot: {
-    width: '100%',
-  },
-  selectMenu: {
-    position: 'absolute !important',
-  },
-}))
+import { ContestantGridContainer } from '../../../../containers/'
+
+const GridDetail = ({ row: {contestants, _id} }) =>  <ContestantGridContainer row={contestants} election_id={_id} />
 
 const AddButton = ({ onExecute }) => (
   <IconButton onClick={onExecute} title="Add row">
@@ -95,7 +79,7 @@ const Command = ({ id, onExecute }) => {
 
 
 
-const getRowId = department => department._id
+const getRowId = election => election._id
 
 export default ({
   row,
@@ -191,6 +175,7 @@ export default ({
       } else {
         let data = {...added[0], category: category, active: false}
         await createElections(data)
+        getElections()
       }     
     }
     if (changed) {
@@ -199,11 +184,13 @@ export default ({
       if (!changed[id]) return
       const data = { _id: id, ...changed[id] }
       await editElection(data)
-      let d = department_id ? getDepartments(): faculty_id ? getFaculties() : null
+      if (department_id) return getDepartments()
+      if (faculty_id) return getFaculties()
     }
     if (deleted) {
       await deleteElection({_id: deleted[0]})
-      let d = department_id ? getDepartments(): faculty_id ? getFaculties() : null
+      if (department_id) return getDepartments()
+      if (faculty_id) return getFaculties()
     }
   }
   rows = elections.filter( election => election.category === category).map( election => ({
@@ -286,9 +273,9 @@ export default ({
           rightColumns={rightFixedColumns}
       />
 
-      {/* <TableRowDetail
-        contentComponent={ReduxGridDetailContainer}
-      /> */}
+      <TableRowDetail
+        contentComponent={GridDetail}
+      />
       <Toolbar />
       <SearchPanel />
       <GroupingPanel showSortingControls />

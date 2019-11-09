@@ -9,10 +9,6 @@ const studentSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    faculty: {
-        type: String,
-        required: true,
-    },
     phoneNo: {
         type: String,
         required: true,
@@ -45,6 +41,10 @@ const studentSchema = new mongoose.Schema({
     department: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Department"
+    },
+    faculty: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Faculty"
     }
 })
 

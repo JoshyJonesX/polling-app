@@ -18,3 +18,21 @@ export const createGridActionElection = (partialStateName, partialStateValue) =>
     partialStateName,
     partialStateValue,
   })
+
+export const createGridActionContestant = (partialStateName, partialStateValue) => ({
+    type: C.CONTESTANT_GRID_STATE_CHANGE_ACTION,
+    partialStateName,
+    partialStateValue,
+  })
+
+export const createGridActionStudent = (partialStateName, partialStateValue) => ({
+    type: C.STUDENT_GRID_STATE_CHANGE_ACTION,
+    partialStateName,
+    partialStateValue,
+  })
+
+export const createGridActionUnRegUser = (partialStateName, partialStateValue) => ({
+    type: C.UNREGUSER_GRID_STATE_CHANGE_ACTION,
+    partialStateName,
+    partialStateValue,
+  })

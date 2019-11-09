@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Faculty = require('./faculty')
 const Department = require('./department')
+const Contestant = require('./contestant')
 
 const electionSchema = new mongoose.Schema({
     name: {
@@ -45,6 +46,11 @@ electionSchema.pre('remove', async function(next){
             let department = await Department.findById(this.department)
             department.elections.remove(this.id)
             await department.save()
+        }
+        if (this.contestants.length) {
+            let contestant = await Contestant.findById(this.contestant)
+            contestant.elections.remove(this.id)
+            await contestant.save()
         }
         return next()
     } catch (err) {

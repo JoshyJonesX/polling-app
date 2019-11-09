@@ -1,10 +1,11 @@
 import { connect } from 'react-redux'
-import { authUser } from "../store/actions/auth"
-import { removeError } from "../store/actions/errors"
+import { authUser, otpAuth } from "../store/actions/auth"
+// import { removeError } from "../store/actions/errors"
 import {
     createGridActionFaculty,
     createGridActionDepartment,
-    createGridActionElection
+    createGridActionElection,
+    createGridActionContestant
 } from "../store/actions/grid"
 import { 
     createFaculty,
@@ -25,11 +26,20 @@ import {
     editElection,
     deleteElection,
   } from "../store/actions/elections"
+import { 
+    createContestant,
+    editContestant,
+    deleteContestant,
+  } from "../store/actions/contestants"
 import { withRouter } from "react-router-dom"
 import ResponsiveDrawer from "../components/Layout"
 import FacultyGridContainerComponent from "../components/Admin/Faculties/FacultyGridContainer"
 import DepartmentGridContainerComponent from "../components/Admin/Departments/DepartmentsGridContainer"
 import ElectionsGridContainerComponent from "../components/Admin/Elections/ElectionsGridContainer"
+import ContestantsGridContainerComponent from "../components/Admin/Contestants/ContestantsGridContainer"
+
+import AuthenticationComponent from "../components/User/Authentication"
+import LandingPageComponent from "../components/User/LandingPage"
 
 const matchDispatchToProps = () =>
     dispatch => ({
@@ -45,7 +55,6 @@ const matchDispatchToProps = () =>
         onGroupingChangeFaculty:grouping => dispatch(createGridActionFaculty('grouping', grouping)),
         onColumnOrderChangeFaculty:order => dispatch(createGridActionFaculty('columnOrder', order)),
         onColumnWidthsChangeFaculty:widths => dispatch(createGridActionFaculty('columnWidths', widths)),
-        onExpandedRowIdsChangeFaculty:expandedRowIds => dispatch(createGridActionFaculty('expandedRowIds', expandedRowIds)),
 
         onExpandedRowIdsChangeElection: expandedRowIds => dispatch(createGridActionElection('expandedRowIds', expandedRowIds)),
         onExpandedGroupsChangeElection: expandedGroups => dispatch(createGridActionElection('expandedGroups', expandedGroups)),
@@ -59,7 +68,6 @@ const matchDispatchToProps = () =>
         onGroupingChangeElection: grouping => dispatch(createGridActionElection('grouping', grouping)),
         onColumnOrderChangeElection: order => dispatch(createGridActionElection('columnOrder', order)),
         onColumnWidthsChangeElection: widths => dispatch(createGridActionElection('columnWidths', widths)),
-        onExpandedRowIdsChangeElection: expandedRowIds => dispatch(createGridActionElection('expandedRowIds', expandedRowIds)),
         
         onExpandedRowIdsChangeDepartment: expandedRowIds => dispatch(createGridActionDepartment('expandedRowIds', expandedRowIds)),
         onExpandedGroupsChangeDepartment: expandedGroups => dispatch(createGridActionDepartment('expandedGroups', expandedGroups)),
@@ -73,8 +81,14 @@ const matchDispatchToProps = () =>
         onGroupingChangeDepartment: grouping => dispatch(createGridActionDepartment('grouping', grouping)),
         onColumnOrderChangeDepartment: order => dispatch(createGridActionDepartment('columnOrder', order)),
         onColumnWidthsChangeDepartment: widths => dispatch(createGridActionDepartment('columnWidths', widths)),
-        onExpandedRowIdsChangeDepartment: expandedRowIds => dispatch(createGridActionDepartment('expandedRowIds', expandedRowIds)),
-
+        
+        onEditingRowIdsChangeContestant: editingRowIds => dispatch(createGridActionContestant('editingRowIds', editingRowIds)),
+        onRowchangesChangeContestant: rowChanges => dispatch(createGridActionContestant('rowChanges', rowChanges)),
+        onColumnOrderChangeContestant: order => dispatch(createGridActionContestant('columnOrder', order)),
+        onColumnWidthsChangeContestant: widths => dispatch(createGridActionContestant('columnWidths', widths)),
+        onAddedRowsChangeContestant: addedRows => dispatch(createGridActionContestant('addedRows', addedRows)),
+        onSortingChangeContestant: sorting => dispatch(createGridActionContestant('sorting', sorting)),
+        
         createFaculty: faculty => dispatch(createFaculty(faculty)),
         getFaculties: () => dispatch(getFaculties()),
         editFaculty: faculty => dispatch(editFaculty(faculty)),
@@ -88,6 +102,9 @@ const matchDispatchToProps = () =>
         getElections: () => dispatch(getElections()),
         editElection: election => dispatch(editElection(election)),
         deleteElection: election => dispatch(deleteElection(election)),
+        createContestant: contestant => dispatch(createContestant(contestant)),
+        editContestant: contestant => dispatch(editContestant(contestant)),
+        deleteContestant: contestant => dispatch(deleteContestant(contestant)),
     })
 
 export const Layout = withRouter(connect(null,null)(ResponsiveDrawer))
@@ -97,15 +114,7 @@ export const FacultyGridContainer = connect(
         ({
             faculties: state.faculties,
             errors: state.errors,
-            grid: {
-                ...state.facultyGrid,
-                columnOrder: ['name', 'abv', 'nod', 'noe']},
-                columnWidths: [
-                    { columnName: 'name', width: 200 },
-                    { columnName: 'abv', width: 100 },
-                    { columnName: 'nod', width: 200 },
-                    { columnName: 'noe', width: 170 }
-                ],
+            grid: state.facultyGrid
         }),
         matchDispatchToProps
 )(FacultyGridContainerComponent)
@@ -116,17 +125,7 @@ export const DepartmentGridContainer = connect(
             faculties: state.faculties,
             departments: state.departments,
             errors: state.errors,
-            grid: {
-                ...state.departmentGrid,
-                columnOrder: ['name', 'abv', 'faculty', 'nos', 'noe'],
-                columnWidths: [
-                    { columnName: 'name', width: 200 },
-                    { columnName: 'abv', width: 100 },
-                    { columnName: 'faculty', width: 150 },
-                    { columnName: 'nos', width: 200 },
-                    { columnName: 'noe', width: 170 }
-                ],
-            }
+            grid: state.departmentGrid
         }),
         matchDispatchToProps
 )(DepartmentGridContainerComponent)
@@ -138,17 +137,23 @@ export const ElectionGridContainer = connect(
             departments: state.departments,
             elections: state.elections,
             errors: state.errors,
-            grid: {
-                rows: [],
-                ...state.electionGrid,
-                columnOrder: ['name', 'for', 'noc', 'active'],
-                columnWidths: [
-                    { columnName: 'name', width: 300 },
-                    { columnName: 'for', width: 100 },
-                    { columnName: 'noc', width: 200 },
-                    { columnName: 'active', width: 170 }
-                ],
-            }
+            grid: state.electionGrid
         }),
         matchDispatchToProps
 )(ElectionsGridContainerComponent)
+
+export const ContestantGridContainer = connect(
+    state => 
+        ({
+            errors: state.errors,
+            grid: state.contestantGrid
+        }),
+        matchDispatchToProps
+)(ContestantsGridContainerComponent)
+
+export const Authentication = connect(
+    state => ({
+       otp: state.otp 
+    }), { authUser, otpAuth })(AuthenticationComponent)
+    
+export const LandingPage = connect(null, null)(LandingPageComponent)

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, Fragment } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import {
   IconButton,
@@ -41,24 +40,6 @@ const GridDetail = ({ row: {elections, departments, _id} }) => {
     <ElectionGridContainer row={election} category={"faculty"} faculty_id={_id} />
   </Fragment>
 }
-
-
-/* const useStyles = makeStyles(theme => ({
-  lookupEditCell: {
-    padding: theme.spacing(1),
-  },
-  dialog: {
-    width: 'calc(100% - 16px)',
-  },
-  inputRoot: {
-    width: '100%',
-  },
-  selectMenu: {
-    position: 'absolute !important',
-  },
-}))
-
-const classes = useStyles() */
 
 const AddButton = ({ onExecute }) => (
   <IconButton onClick={onExecute} title="Add row">

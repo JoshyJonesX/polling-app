@@ -27,7 +27,9 @@ exports.createElection = async function(req, res, next) {
                         let department = await db.Department.findById(_id)
                             department.elections.push(election._id)
                             await department.save()
-                            let data = await db.Election.findById(election._id).populate({path: 'department', select: 'abv _id'})
+                            let data = await db.Election.findById(election._id)
+                                                .populate({path: 'department', select: 'abv _id'})
+                                                .populate({path: 'contestants', select: 'fName lName matNo votes student'})
                             return res.status(200).json(data)
                     } catch (err) {
                         if (err.code === 11000) {
@@ -66,7 +68,9 @@ exports.createElection = async function(req, res, next) {
                         let faculty = await db.Faculty.findById(_id)
                             faculty.elections.push(election._id)
                             await faculty.save()
-                        let data = await db.Election.findById(election._id).populate({path: 'faculty', select: 'abv -_id'})
+                        let data = await db.Election.findById(election._id)
+                                            .populate({path: 'faculty', select: 'abv -_id'})
+                                            .populate({path: 'contestants', select: 'fName lName matNo votes student'})
                             return res.status(200).json(data)
                     } catch (err) {
                         if (err.code === 11000) {
@@ -86,6 +90,7 @@ exports.createElection = async function(req, res, next) {
                 active: req.body.active
             })
             return res.status(200).json(election)
+            .populate({path: 'contestants', select: 'fName lName matNo votes student'})
         }
     } catch (err) {
         if (err.code === 11000) {
@@ -103,7 +108,7 @@ exports.getElections = async function(req, res, next) {
         let elections = await db.Election.find({})
                             .populate({path: 'faculty', select: 'abv -_id'})
                             .populate({path: 'department', select: 'abv -_id'})
-                            .populate({path: 'contestants', select: 'abv -_id'})
+                            .populate({path: 'contestants', select: 'fName lName matNo votes student'})
         return res.status(200).json(elections)
     } catch (err) {
         return next(err)        
@@ -115,7 +120,7 @@ exports.getElection = async function(req, res, next) {
         let election = await db.Election.findById(req.params.election_id)
                             .populate({path: 'faculty', select: 'abv -_id'})
                             .populate({path: 'department', select: 'abv -_id'})
-                            .populate({path: 'contestants', select: 'abv -_id'})
+                            .populate({path: 'contestants', select: 'fName lName matNo votes student'})
         return res.status(200).json(election)
     } catch (err) {
         return next(err)        
@@ -127,7 +132,7 @@ exports.updateElection = async function (req, res, next) {
         let election = await db.Election.findByIdAndUpdate({_id: req.params.id}, req.body, {new: true})
                             .populate({path: 'faculty', select: 'abv -_id'})
                             .populate({path: 'department', select: 'abv -_id'})
-                            .populate({path: 'contestants', select: 'abv -_id'})
+                            .populate({path: 'contestants', select: 'fName lName matNo votes student'})
         res.status(200).json(election)
     } catch (err) {
         return next(err)

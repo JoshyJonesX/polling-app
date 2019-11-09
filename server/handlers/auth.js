@@ -47,7 +47,7 @@ exports.signup = async function (req, res, next) {
     try {
        let student = await db.Student.create(req.body)
 
-       let foundDepartment = await db.Department.findById(req.params.department_id)
+       let foundDepartment = await db.Department.findById(req.body.department)
        foundDepartment.students.push(student._id)
        await foundDepartment.save()
 
@@ -66,7 +66,7 @@ exports.signup = async function (req, res, next) {
         })
     } catch (err) {
         if(err.code === 11000){
-            err.message = 'Sorry, that username already is taken'
+            err.message = 'Sorry, that username is already taken'
         }
         return next({
             status: 400,
@@ -76,23 +76,78 @@ exports.signup = async function (req, res, next) {
     }
 }
 
-exports.preSignup = async function (req, res, next) {
+exports.register = async function (req, res, next) {
     try {
-        // change to two way verification
+        console.log(req.body.matNo)
         let unRegStudent = await db.UnRegStudent.findOne({matNo: req.body.matNo})
         let { phoneNo, matNo} = unRegStudent
-        const text = `${matNo} your registration code is: 4190 `
-        nexmo.message.sendSms( 'IBB Polls', phoneNo, text, (err, responseData) => {
-            if (err) {
-               return next(err)
+        nexmo.verify.request({number: phoneNo, brand: 'IBBUL'}, (err, result) => {
+            if(err) {
+              return next({
+                status: 500,
+                message: err
+            })
             } else {
-                if(responseData.messages[0]['status'] === "0") {
-                  return res.status(200).json("Message sent successfully.")
+                if(result && result.status == '0') {
+                    console.log(result)
+                    res.status(200).json(result)
                 } else {
                     return next({
                         status: 400,
-                        message:`Message failed with error: ${responseData.messages[0]['error-text']}`
-                    });
+                        message: result.error_text
+                    })
+                }
+            }
+          })
+    } catch (err) {
+        return next(err)
+    }    
+}
+
+exports.check = async function (req, res, next) {
+    try {
+        let pin = req.body.pin;
+        let requestId = req.body.request_id
+        
+        nexmo.verify.check({request_id: requestId, code: pin}, (err, result) => {
+            if(err) {
+                throw err
+            } else {        
+                if(result && result.status == '0') {
+                    console.log(result)
+                    //A status of 0 means success! Respond with 200: OK
+                    res.status(200).send(result)
+                    console.log('Account verified!')
+                } else {
+                    return next({
+                        status: 400,
+                        message: result.error_text
+                    })
+                }
+            }
+        })
+    } catch (err) {
+        return next(err)
+    }    
+}
+
+exports.cancel = async function (req, res, next) {
+    try {
+        let requestId = req.body.request_id
+ 
+        nexmo.verify.control({request_id: requestId, cmd:'cancel'}, (err, result) => {
+            if(err) {
+                throw err
+            } else {
+                if(result && result.status == '0') {
+                    //A status of 0 means success! Respond with 200: OK
+                    res.status(200).send(result)
+                    console.log('Account verified!')
+                } else {
+                    return next({
+                        status: 400,
+                        message: result.error_text
+                    })
                 }
             }
         })

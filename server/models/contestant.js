@@ -2,13 +2,18 @@ const mongoose = require('mongoose')
 const Election = require('./election')
 
 const contestantSchema = new mongoose.Schema({
-    firstName: {
+    fName: {
         type: String,
         required: true
     },
-    lastName: {
+    lName: {
         type: String,
         required: true
+    },
+    matNo: {
+        type: String,
+        required: true,
+        unique: true
     },
     election: {
         type: mongoose.Schema.Types.ObjectId,

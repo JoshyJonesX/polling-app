@@ -19,6 +19,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Faculties from "../Admin/Faculties"
 import Departments from "../Admin/Departments"
 import Elections from "../Admin/Elections"
+import { LandingPage } from "../../containers"
 
 const drawerWidth = 240
 
@@ -146,6 +147,8 @@ function ResponsiveDrawer(props) {
       <main className={classes.content}>
         <div className={classes.toolbar} />
             <Switch>
+                <Route exact path="/" render={props => (<LandingPage signIn buttonText="Sign in" linkText="signup" helperText="Don't have an account? Sign Up" {...props}/>)} />
+                <Route exact path="/signup" render={props => (<LandingPage  buttonText="Sign Up" linkText="" helperText="Already have an account? Sign In" {...props}/>)} />
                 <Route exact path="/admin" render={() => <div>Dashboard</div>} />
                 <Route  path="/admin/faculties" render={ props => <Faculties {...props} />} />
                 <Route  path="/admin/departments" render={ props => <Departments {...props} />} />

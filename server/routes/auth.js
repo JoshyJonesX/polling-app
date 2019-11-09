@@ -1,9 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const { signup, signin, preSignup } = require('../handlers/auth')
+const { signup, signin, register, check, cancel } = require('../handlers/auth')
 
-router.post('/signup/:department_id', signup)
+router.post('/signup/', signup)
 router.post('/signin/', signin)
-router.post('/presignup/:unRegStudent_id', preSignup)
+router.post('/register/', register)
+router.post('/check/', check)
+router.post('/cancel/', cancel)
 
-module.exports = router;
+module.exports = router
