@@ -22,8 +22,8 @@ const removeUnRegUser = unRegUser => ({
     unRegUser
 })
 
-export const createUnRegUser = unregUser => {
-    return dispatch => apiCall("post", "/admin/api/unregUser", unregUser)
+export const createUnRegUser = unRegUser => {
+    return dispatch => apiCall("post", "/admin/api/unregstudent", unRegUser)
         .then(res => {
             dispatch(addUnRegUser(res));
         })
@@ -33,7 +33,7 @@ export const createUnRegUser = unregUser => {
 }
 
 export const getUnRegUsers = () => {
-    return dispatch => apiCall("get", "/admin/api/unregUser")
+    return dispatch => apiCall("get", "/admin/api/unregstudent")
         .then(res => {
             dispatch(fetchUnRegUsers(res));
         })
@@ -42,8 +42,8 @@ export const getUnRegUsers = () => {
         })
 }
  
-export const editUnRegUser = unregUser => {
-    return dispatch => apiCall("put", `/admin/api/unregUser/${unregUser._id}`, unRegUser)
+export const editUnRegUser = unRegUser => {
+    return dispatch => apiCall("put", `/admin/api/unregstudent/${unRegUser._id}`, unRegUser)
         .then(res => {
             dispatch(updateUnRegUser(res));
         })
@@ -52,8 +52,8 @@ export const editUnRegUser = unregUser => {
         })
 }
 
-export const deleteunRegUser = unRegUser => {
-    return dispatch => apiCall("delete", `/admin/api/unRegUser/${unRegUser._id}`)
+export const deleteUnRegUser = unRegUser => {
+    return dispatch => apiCall("delete", `/admin/api/unregstudent/${unRegUser._id}`)
         .then(res => {
             dispatch(removeUnRegUser(res));
         })

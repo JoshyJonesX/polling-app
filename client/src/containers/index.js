@@ -5,6 +5,8 @@ import {
     createGridActionFaculty,
     createGridActionDepartment,
     createGridActionElection,
+    createGridActionStudent,
+    createGridActionUnRegUser,
     createGridActionContestant
 } from "../store/actions/grid"
 import { 
@@ -26,6 +28,16 @@ import {
     editElection,
     deleteElection,
   } from "../store/actions/elections"
+import {
+    getStudents,
+    deleteStudent,
+  } from "../store/actions/students"
+import { 
+    createUnRegUser,
+    getUnRegUsers,
+    editUnRegUser,
+    deleteUnRegUser,
+  } from "../store/actions/unRegUsers"
 import { 
     createContestant,
     editContestant,
@@ -35,7 +47,9 @@ import { withRouter } from "react-router-dom"
 import ResponsiveDrawer from "../components/Layout"
 import FacultyGridContainerComponent from "../components/Admin/Faculties/FacultyGridContainer"
 import DepartmentGridContainerComponent from "../components/Admin/Departments/DepartmentsGridContainer"
-import ElectionsGridContainerComponent from "../components/Admin/Elections/ElectionsGridContainer"
+import ElectionGridContainerComponent from "../components/Admin/Elections/ElectionGridContainer"
+import StudentGridContainerComponent from "../components/Admin/Students/StudentGridContainer"
+import UnRegUserGridContainerComponent from "../components/Admin/UnRegUsers/UnRegUserGridContainer"
 import ContestantsGridContainerComponent from "../components/Admin/Contestants/ContestantsGridContainer"
 
 import AuthenticationComponent from "../components/User/Authentication"
@@ -82,6 +96,32 @@ const matchDispatchToProps = () =>
         onColumnOrderChangeDepartment: order => dispatch(createGridActionDepartment('columnOrder', order)),
         onColumnWidthsChangeDepartment: widths => dispatch(createGridActionDepartment('columnWidths', widths)),
         
+        onExpandedRowIdsChangeStudent: expandedRowIds => dispatch(createGridActionStudent('expandedRowIds', expandedRowIds)),
+        onExpandedGroupsChangeStudent: expandedGroups => dispatch(createGridActionStudent('expandedGroups', expandedGroups)),
+        onValueChangeStudent: searchValue => dispatch(createGridActionStudent('searchValue', searchValue)),
+        onEditingRowIdsChangeStudent: editingRowIds => dispatch(createGridActionStudent('editingRowIds', editingRowIds)),
+        onRowchangesChangeStudent: rowChanges => dispatch(createGridActionStudent('rowChanges', rowChanges)),
+        onCurrentPageChangeStudent: currentPage => dispatch(createGridActionStudent('currentPage', currentPage)),
+        onPageSizeChangeStudent: pageSize => dispatch(createGridActionStudent('pageSize', pageSize)),
+        onAddedRowsChangeStudent: addedRows => dispatch(createGridActionStudent('addedRows', addedRows)),
+        onSortingChangeStudent: sorting => dispatch(createGridActionStudent('sorting', sorting)),
+        onGroupingChangeStudent: grouping => dispatch(createGridActionStudent('grouping', grouping)),
+        onColumnOrderChangeStudent: order => dispatch(createGridActionStudent('columnOrder', order)),
+        onColumnWidthsChangeStudent: widths => dispatch(createGridActionStudent('columnWidths', widths)),
+        
+        onExpandedRowIdsChangeUnRegUser: expandedRowIds => dispatch(createGridActionUnRegUser('expandedRowIds', expandedRowIds)),
+        onExpandedGroupsChangeUnRegUser: expandedGroups => dispatch(createGridActionUnRegUser('expandedGroups', expandedGroups)),
+        onValueChangeUnRegUser: searchValue => dispatch(createGridActionUnRegUser('searchValue', searchValue)),
+        onEditingRowIdsChangeUnRegUser: editingRowIds => dispatch(createGridActionUnRegUser('editingRowIds', editingRowIds)),
+        onRowchangesChangeUnRegUser: rowChanges => dispatch(createGridActionUnRegUser('rowChanges', rowChanges)),
+        onCurrentPageChangeUnRegUser: currentPage => dispatch(createGridActionUnRegUser('currentPage', currentPage)),
+        onPageSizeChangeUnRegUser: pageSize => dispatch(createGridActionUnRegUser('pageSize', pageSize)),
+        onAddedRowsChangeUnRegUser: addedRows => dispatch(createGridActionUnRegUser('addedRows', addedRows)),
+        onSortingChangeUnRegUser: sorting => dispatch(createGridActionUnRegUser('sorting', sorting)),
+        onGroupingChangeUnRegUser: grouping => dispatch(createGridActionUnRegUser('grouping', grouping)),
+        onColumnOrderChangeUnRegUser: order => dispatch(createGridActionUnRegUser('columnOrder', order)),
+        onColumnWidthsChangeUnRegUser: widths => dispatch(createGridActionUnRegUser('columnWidths', widths)),
+        
         onEditingRowIdsChangeContestant: editingRowIds => dispatch(createGridActionContestant('editingRowIds', editingRowIds)),
         onRowchangesChangeContestant: rowChanges => dispatch(createGridActionContestant('rowChanges', rowChanges)),
         onColumnOrderChangeContestant: order => dispatch(createGridActionContestant('columnOrder', order)),
@@ -93,15 +133,26 @@ const matchDispatchToProps = () =>
         getFaculties: () => dispatch(getFaculties()),
         editFaculty: faculty => dispatch(editFaculty(faculty)),
         deleteFaculty: faculty => dispatch(deleteFaculty(faculty)),
+
         createDepartment: department => dispatch(createDepartment(department)),
         getDepartments: () => dispatch(getDepartments()),
         editDepartment: department => dispatch(editDepartment(department)),
         deleteDepartment: department => dispatch(deleteDepartment(department)),
+        
         createElection: election => dispatch(createElection(election)),
         createElections: election => dispatch(createElections(election)),
         getElections: () => dispatch(getElections()),
         editElection: election => dispatch(editElection(election)),
         deleteElection: election => dispatch(deleteElection(election)),
+        
+        getStudents: () => dispatch(getStudents()),
+        deleteStudent: student => dispatch(deleteStudent(student)),
+        
+        createUnRegUser: unRegUser => dispatch(createUnRegUser(unRegUser)),
+        getUnRegUsers: () => dispatch(getUnRegUsers()),
+        editUnRegUser: unRegUser => dispatch(editUnRegUser(unRegUser)),
+        deleteUnRegUser: unRegUser => dispatch(deleteUnRegUser(unRegUser)),
+        
         createContestant: contestant => dispatch(createContestant(contestant)),
         editContestant: contestant => dispatch(editContestant(contestant)),
         deleteContestant: contestant => dispatch(deleteContestant(contestant)),
@@ -140,7 +191,27 @@ export const ElectionGridContainer = connect(
             grid: state.electionGrid
         }),
         matchDispatchToProps
-)(ElectionsGridContainerComponent)
+)(ElectionGridContainerComponent)
+
+export const StudentGridContainer = connect(
+    state => 
+        ({
+            students: state.students,
+            errors: state.errors,
+            grid: state.studentGrid
+        }),
+        matchDispatchToProps
+)(StudentGridContainerComponent)
+
+export const UnRegUserGridContainer = connect(
+    state => 
+        ({
+            unRegUsers: state.unRegUser,
+            errors: state.errors,
+            grid: state.unRegUserGrid
+        }),
+        matchDispatchToProps
+)(UnRegUserGridContainerComponent)
 
 export const ContestantGridContainer = connect(
     state => 

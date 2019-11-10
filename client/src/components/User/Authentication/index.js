@@ -88,7 +88,7 @@ export default ({ buttonText, linkText, helperText, authUser, otpAuth, otp, sign
               <TextField
                 autoComplete="matNo"
                 name="matNo"
-                varian---------t="outlined"
+                variant="outlined"
                 required
                 fullWidth
                 id="matricNumber"

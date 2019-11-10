@@ -70,7 +70,17 @@ export const electionGrid = (state = {
     return state
   }
 
-export const studentGrid = (state = gridInitialState, action) => {
+export const studentGrid = (state = {
+  ...gridInitialState,
+  columnOrder: ['matNo', 'username', 'level', 'faculty', 'department', 'role'],
+  columnWidths: [
+      { columnName: 'matNo', width: 200 },
+      { columnName: 'username', width: 200 },
+      { columnName: 'level', width: 200 },
+      { columnName: 'faculty', width: 100 },
+      { columnName: 'department', width: 100 },
+      { columnName: 'role', width: 100 },
+  ]}, action) => {
     if (action.type === C.STUDENT_GRID_STATE_CHANGE_ACTION) {
       return {
         ...state,
@@ -98,7 +108,13 @@ export const contestantGrid = (state = {
     return state
   }
 
-export const unRegUserGrid = (state = gridInitialState, action) => {
+export const unRegUserGrid = (state = {
+  ...gridInitialState,
+  columnOrder: ['matNo', 'phoneNo',],
+  columnWidths: [
+      { columnName: 'matNo', width: 200 },
+      { columnName: 'phoneNo', width: 200 },
+  ]}, action) => {
     if (action.type === C.UNREGUSER_GRID_STATE_CHANGE_ACTION) {
       return {
         ...state,

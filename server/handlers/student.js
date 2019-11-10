@@ -5,10 +5,9 @@ const db = require('../models')
 // read
 exports.getStudents = async function (req, res, next) {
     try {
-        let students = await db.Students.find({})
-                                .populate('department', {
-                                    abv: true,                                    
-                                })
+        let students = await db.Student.find({})
+                                .populate({path: 'department', select: 'abv -_id'})
+                                .populate({path: 'faculty', select: 'abv -_id'})
         return res.status(200).json(students)
     } catch (err) {
         return next(err)
@@ -16,6 +15,7 @@ exports.getStudents = async function (req, res, next) {
 }
 
 //update no update route student data shouldn't be updated by admin
+// create this needed when user wants to make changes to profile info
 
 // delete
 exports.deleteStudent = async function(req, res, next) {

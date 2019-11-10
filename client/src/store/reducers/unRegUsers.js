@@ -23,7 +23,7 @@ export default (state = [], action) => {
                 unRegUser({}, action)
             ]
         case C.GET_UNREGUSERS:
-            return [...action.faculties]
+            return [...action.unRegUsers]
         case C.UPDATE_UNREGUSER:
                 return [
                     ...state.filter(u => u._id !== action.unRegUser._id), unRegUser({}, action)
